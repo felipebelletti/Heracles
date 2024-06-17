@@ -60,17 +60,23 @@ public class QuestWidget {
         quest.display().icon().render(graphics, scissor, x + x() + 4, y + y() + 4, 24, 24);
         CursorUtils.setCursor(hovered, CursorScreen.Cursor.POINTER);
         if (hovered && (!(ClientUtils.screen() instanceof QuestsScreen screen) || !screen.isTemporaryWidgetVisible())) {
-            String subtitleText = quest.display().subtitle().getString().trim();
+            String subtitleText = quest.display().subtitle().getString();
+
             if (subtitleText.isBlank()) {
                 ScreenUtils.setTooltip(quest.display().title().copy().withStyle(style -> style.withBold(true)), false);
-            } else {
-                List<Component> lines = new ArrayList<>(List.of(
-                    quest.display().title().copy().withStyle(style -> style.withBold(true)),
-                    quest.display().subtitle()
-                ));
-                if (status == ModUtils.QuestStatus.COMPLETED) lines.add(ConstantComponents.Quests.CLAIMABLE);
-                ScreenUtils.setTooltip(lines, false);
+                return;
             }
+
+            List<Component> lines = new ArrayList<>();
+            lines.add(quest.display().title().copy().withStyle(style -> style.withBold(true)));
+        
+            String[] subtitleLines = subtitleText.split("\n");
+            for (String line : subtitleLines) {
+                lines.add(Component.literal(line));
+            }
+
+            if (status == ModUtils.QuestStatus.COMPLETED) lines.add(ConstantComponents.Quests.CLAIMABLE);
+            ScreenUtils.setTooltip(lines, false);
         }
     }
 
