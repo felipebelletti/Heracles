@@ -17,6 +17,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import org.jetbrains.annotations.Nullable;
 import earth.terrarium.heracles.common.constants.GuiConstants;
+import earth.terrarium.heracles.client.HeraclesClient;
 
 public class QuestScreen extends BaseQuestScreen {
 
@@ -33,6 +34,7 @@ public class QuestScreen extends BaseQuestScreen {
 
     public QuestScreen(QuestContent content) {
         super(content);
+        HeraclesClient.lastOpenedQuestId = content.id();
     }
 
     @Override
@@ -50,6 +52,7 @@ public class QuestScreen extends BaseQuestScreen {
     @Override
     protected void init() {
         super.init();
+
         calculateContentArea();
 
         this.taskList = new TaskListWidget(contentX, CONTENT_Y + GuiConstants.WINDOW_PADDING_Y, questContentWidth, contentHeight, 5.0D, 5.0D, this.content.id(), this.entry(), this.content.progress(), this.content.quests(), null, null);

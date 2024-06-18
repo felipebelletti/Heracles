@@ -31,6 +31,7 @@ public class HeraclesClient {
     );
 
     public static String lastGroup = "";
+    public static String lastOpenedQuestId = null;
 
     public static void init() {
         Heracles.setRegistryAccess(() -> {

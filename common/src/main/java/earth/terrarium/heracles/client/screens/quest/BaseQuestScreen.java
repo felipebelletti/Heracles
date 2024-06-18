@@ -26,6 +26,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import earth.terrarium.heracles.client.HeraclesClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -120,6 +121,7 @@ public abstract class BaseQuestScreen extends AbstractQuestScreen<QuestContent> 
 
     @Override
     protected void goBack() {
+        HeraclesClient.lastOpenedQuestId = null;
         NetworkHandler.CHANNEL.sendToServer(new OpenGroupPacket(this.content.fromGroup(), this instanceof QuestEditScreen));
     }
 

@@ -20,6 +20,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.CommonComponents;
+import earth.terrarium.heracles.client.HeraclesClient;
+import earth.terrarium.heracles.common.network.packets.quests.OpenQuestPacket;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +43,14 @@ public class QuestsScreen extends AbstractQuestScreen<QuestsContent> {
     @Override
     protected void init() {
         super.init();
+
+        if (HeraclesClient.lastOpenedQuestId != null) {
+            ClientQuests.get(HeraclesClient.lastOpenedQuestId).ifPresent(quest -> {
+                NetworkHandler.CHANNEL.sendToServer(new OpenQuestPacket(content.group(), HeraclesClient.lastOpenedQuestId, false));
+            });
+            return;
+        }
+
         if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.hasPermissions(2)) {
             addRenderableWidget(new ImageButton(this.width - 24 - GuiConstants.WINDOW_PADDING_X, 1 + GuiConstants.WINDOW_PADDING_Y, 11, 11, 33, 15, 11, HEADING, 256, 256, (button) ->
                 NetworkHandler.CHANNEL.sendToServer(new OpenGroupPacket(this.content.group(), this.getClass() == QuestsScreen.class))
