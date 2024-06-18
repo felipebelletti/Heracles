@@ -9,6 +9,7 @@ import earth.terrarium.heracles.client.widgets.base.BaseModal;
 import earth.terrarium.heracles.client.widgets.base.FileWidget;
 import earth.terrarium.heracles.client.widgets.buttons.ThemedButton;
 import earth.terrarium.heracles.common.constants.ConstantComponents;
+import earth.terrarium.heracles.common.constants.GuiConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -68,9 +69,9 @@ public class UploadModal extends BaseModal implements FileWidget {
             ConstantComponents.Quests.IMPORT, x + 8, y + 6, EditorTheme.getModalUploadingTitle(),
             false
         );
-
-        int y = this.y + 19;
-        int x = this.x + 8;
+        
+        int y = this.y + 19 + GuiConstants.WINDOW_PADDING_X;
+        int x = this.x + 8 + GuiConstants.WINDOW_PADDING_Y;
         int tempY = y;
         tempY -= scrollAmount;
 
@@ -95,8 +96,9 @@ public class UploadModal extends BaseModal implements FileWidget {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (!isVisible()) return false;
         if (super.mouseClicked(mouseX, mouseY, button)) return true;
-        int x = screenWidth / 2 - (WIDTH / 2);
-        int y = screenHeight / 2 - (HEIGHT / 2);
+        
+        int x = screenWidth / 2 - (WIDTH / 2) + GuiConstants.WINDOW_PADDING_X;
+        int y = screenHeight / 2 - (HEIGHT / 2) + GuiConstants.WINDOW_PADDING_Y;
 
         if (mouseX < x || mouseX > x + WIDTH || mouseY < y || mouseY > y + HEIGHT) {
             if (this.items.isEmpty()) {

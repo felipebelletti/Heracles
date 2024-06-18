@@ -16,6 +16,7 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import org.jetbrains.annotations.Nullable;
+import earth.terrarium.heracles.common.constants.GuiConstants;
 import earth.terrarium.heracles.client.HeraclesClient;
 
 public class QuestScreen extends BaseQuestScreen {
@@ -45,7 +46,7 @@ public class QuestScreen extends BaseQuestScreen {
         calculateContentArea();
 
         TagProvider provider = new QuestTagProvider();
-        this.description = new DocumentWidget(contentX, CONTENT_Y, questContentWidth, contentHeight, 5.0D, 5.0D, new DefaultTheme(), provider.parse(desc));
+        this.description = new DocumentWidget(contentX, CONTENT_Y + GuiConstants.WINDOW_PADDING_Y, questContentWidth, contentHeight, 5.0D, 5.0D, new DefaultTheme(), provider.parse(desc));
     }
 
     @Override
@@ -54,8 +55,8 @@ public class QuestScreen extends BaseQuestScreen {
 
         calculateContentArea();
 
-        this.taskList = new TaskListWidget(contentX, CONTENT_Y, questContentWidth, contentHeight, 5.0D, 5.0D, this.content.id(), this.entry(), this.content.progress(), this.content.quests(), null, null);
-        this.rewardList = new RewardListWidget(contentX, CONTENT_Y, questContentWidth, contentHeight, 5.0D, 5.0D, this.entry(), this.content.progress(), null, null);
+        this.taskList = new TaskListWidget(contentX, CONTENT_Y + GuiConstants.WINDOW_PADDING_Y, questContentWidth, contentHeight, 5.0D, 5.0D, this.content.id(), this.entry(), this.content.progress(), this.content.quests(), null, null);
+        this.rewardList = new RewardListWidget(contentX, CONTENT_Y + GuiConstants.WINDOW_PADDING_Y, questContentWidth, contentHeight, 5.0D, 5.0D, this.entry(), this.content.progress(), null, null);
         try {
             this.descriptionError = null;
             this.desc = String.join("", MarkdownParser.parse(this.quest().display().description()));
@@ -64,7 +65,7 @@ public class QuestScreen extends BaseQuestScreen {
             Heracles.LOGGER.error("Error parsing quest description: ", e);
         }
         if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.hasPermissions(2)) {
-            addRenderableWidget(new ImageButton(this.width - 24, 1, 11, 11, 33, 15, 11, HEADING, 256, 256, (button) ->
+            addRenderableWidget(new ImageButton(this.width - 24 - GuiConstants.WINDOW_PADDING_X, 1 + GuiConstants.WINDOW_PADDING_Y, 11, 11, 33, 15, 11, HEADING, 256, 256, (button) ->
                 NetworkHandler.CHANNEL.sendToServer(new OpenQuestPacket(this.content.fromGroup(), this.content.id(), true))
             )).setTooltip(Tooltip.create(ConstantComponents.TOGGLE_EDIT));
         }
@@ -72,8 +73,8 @@ public class QuestScreen extends BaseQuestScreen {
     }
 
     private void calculateContentArea() {
-        contentX = (int) (questContentCenter() - (questContentWidth / 2f) + 0.5f);
-        contentHeight = this.height - 15;
+        contentX = (int) (questContentCenter() - (questContentWidth / 2f) + 0.5f) + GuiConstants.WINDOW_PADDING_X;
+        contentHeight = this.height - 15 - 2 * GuiConstants.WINDOW_PADDING_Y;
     }
 
     @Override
