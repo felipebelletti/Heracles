@@ -12,16 +12,16 @@ import earth.terrarium.heracles.common.handlers.quests.QuestHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import earth.terrarium.heracles.common.network.NetworkHandler;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 
 public record EditGroupPacket(
-    String group,
-    Optional<QuestIcon<?>> icon,
-    Optional<String> title,
-    Optional<String> description
-) implements Packet<EditGroupPacket> {
+        String group,
+        Optional<QuestIcon<?>> icon,
+        Optional<String> title,
+        Optional<String> description) implements Packet<EditGroupPacket> {
 
     public static final ServerboundPacketType<EditGroupPacket> TYPE = new Type();
 
@@ -55,7 +55,8 @@ public record EditGroupPacket(
         @Override
         public void encode(EditGroupPacket message, FriendlyByteBuf buffer) {
             buffer.writeUtf(message.group);
-            buffer.writeOptional(message.icon(), (buf, icon) -> PacketHelper.writeWithRegistryYabn(Heracles.getRegistryAccess(), buffer, QuestIcons.CODEC, icon, true));
+            buffer.writeOptional(message.icon(), (buf, icon) -> PacketHelper
+                    .writeWithRegistryYabn(Heracles.getRegistryAccess(), buffer, QuestIcons.CODEC, icon, true));
             buffer.writeOptional(message.title(), FriendlyByteBuf::writeUtf);
             buffer.writeOptional(message.description(), FriendlyByteBuf::writeUtf);
         }
@@ -63,8 +64,9 @@ public record EditGroupPacket(
         @Override
         public EditGroupPacket decode(FriendlyByteBuf buffer) {
             String id = buffer.readUtf();
-            Optional<QuestIcon<?>> icon = buffer.readOptional(buf -> PacketHelper.readWithRegistryYabn(Heracles.getRegistryAccess(), buf, QuestIcons.CODEC, true)
-                .getOrThrow(false, System.err::println));
+            Optional<QuestIcon<?>> icon = buffer.readOptional(
+                    buf -> PacketHelper.readWithRegistryYabn(Heracles.getRegistryAccess(), buf, QuestIcons.CODEC, true)
+                            .getOrThrow(false, System.err::println));
             Optional<String> title = buffer.readOptional(FriendlyByteBuf::readUtf);
             Optional<String> description = buffer.readOptional(FriendlyByteBuf::readUtf);
             return new EditGroupPacket(id, icon, title, description);
@@ -75,13 +77,21 @@ public record EditGroupPacket(
             return (player) -> {
                 if (player.hasPermissions(2) && QuestHandler.groups().containsKey(message.group())) {
                     Group group = QuestHandler.groups().get(message.group());
-                    QuestHandler.groups().put(message.group(), new Group(
-                        message.icon().or(group::icon),
-                        message.title().orElse(group.title()),
-                        message.description().orElse(group.description())
-                    ));
+                    Group updatedGroup = new Group(
+                            message.icon().or(group::icon),
+                            message.title().orElse(group.title()),
+                            message.description().orElse(group.description()));
+
+                    QuestHandler.groups().put(message.group(), updatedGroup);
                     QuestHandler.saveGroups();
-                    //TODO send packet to all players to update their quest gui
+
+                    NetworkHandler.CHANNEL.sendToAllPlayers(
+                            new ClientboundUpdateGroupPacket(
+                                    message.group(),
+                                    message.icon(),
+                                    message.title(),
+                                    message.description()),
+                            player.getServer());
                 }
             };
         }
