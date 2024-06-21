@@ -6,6 +6,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import java.util.HashMap;
 import java.util.Map;
 
+/*
+@TODO:
+Theoretically, you could create a QuestInfo class that would hold QuestStatus and provide the tasksLeft data.
+However, I'm too tired for that now
+*/
+
 public record QuestsContent(
     String group,
     Map<String, ModUtils.QuestStatus> questId_to_questStatus,
