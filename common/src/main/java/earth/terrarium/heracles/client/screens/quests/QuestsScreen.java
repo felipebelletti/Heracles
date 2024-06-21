@@ -3,6 +3,7 @@ package earth.terrarium.heracles.client.screens.quests;
 import com.mojang.datafixers.util.Pair;
 import earth.terrarium.heracles.api.client.theme.QuestsScreenTheme;
 import earth.terrarium.heracles.client.HeraclesClient;
+import earth.terrarium.heracles.common.constants.GuiConstants;
 import earth.terrarium.heracles.client.handlers.ClientQuests;
 import earth.terrarium.heracles.client.screens.AbstractQuestScreen;
 import earth.terrarium.heracles.client.screens.mousemode.MouseMode;
@@ -19,6 +20,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.CommonComponents;
+import earth.terrarium.heracles.client.HeraclesClient;
+import earth.terrarium.heracles.common.network.packets.quests.OpenQuestPacket;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,14 +43,22 @@ public class QuestsScreen extends AbstractQuestScreen<QuestsContent> {
     @Override
     protected void init() {
         super.init();
+
+        if (HeraclesClient.lastOpenedQuestId != null) {
+            ClientQuests.get(HeraclesClient.lastOpenedQuestId).ifPresent(quest -> {
+                NetworkHandler.CHANNEL.sendToServer(new OpenQuestPacket(content.group(), HeraclesClient.lastOpenedQuestId, false));
+            });
+            return;
+        }
+
         if (Minecraft.getInstance().player != null && Minecraft.getInstance().player.hasPermissions(2)) {
-            addRenderableWidget(new ImageButton(this.width - 24, 1, 11, 11, 33, 15, 11, HEADING, 256, 256, (button) ->
+            addRenderableWidget(new ImageButton(this.width - 24 - GuiConstants.WINDOW_PADDING_X, 1 + GuiConstants.WINDOW_PADDING_Y, 11, 11, 33, 15, 11, HEADING, 256, 256, (button) ->
                 NetworkHandler.CHANNEL.sendToServer(new OpenGroupPacket(this.content.group(), this.getClass() == QuestsScreen.class))
             )).setTooltip(Tooltip.create(ConstantComponents.TOGGLE_EDIT));
         }
 
         if (!(this instanceof QuestsEditScreen)) {
-            addRenderableWidget(new ImageButton(sideBarWidth + 3, 1, 11, 11, 44, 15, 11, HEADING, 256, 256, (button) -> {
+            addRenderableWidget(new ImageButton(sideBarWidth + 3 + GuiConstants.WINDOW_PADDING_X, 1 + GuiConstants.WINDOW_PADDING_Y, 11, 11, 44, 15, 11, HEADING, 256, 256, (button) -> {
                 NetworkHandler.CHANNEL.sendToServer(new ClaimRewardsPacket());
             })).setTooltip(Tooltip.create(ConstantComponents.Rewards.CLAIM));
         }
@@ -60,11 +71,11 @@ public class QuestsScreen extends AbstractQuestScreen<QuestsContent> {
         );
 
         questsWidget = addRenderableWidget(new QuestsWidget(
-            (int) (this.width * 0.25f), // aka SIDE_BAR_PORTION
-            15,
+            (int) (this.width * 0.25f) + GuiConstants.WINDOW_PADDING_X, // aka SIDE_BAR_PORTION
+            15 + GuiConstants.WINDOW_PADDING_Y,
             (int) (this.width * 0.75f),
             (int) (this.width * 0.50f),
-            this.height - 15,
+            this.height - 15 - 2 * GuiConstants.WINDOW_PADDING_Y,
             () -> actualChildren().contains(selectQuestWidget),
             this::getMouseMode,
             quest -> {
@@ -82,10 +93,10 @@ public class QuestsScreen extends AbstractQuestScreen<QuestsContent> {
         HeraclesClient.lastGroup = content.group();
 
         this.groupsList = addRenderableWidget(new GroupsList(
-            0,
-            15,
+            GuiConstants.WINDOW_PADDING_X,
+            15 + GuiConstants.WINDOW_PADDING_Y,
             sideBarWidth,
-            this.height - 15,
+            this.height - 15 - 2 * GuiConstants.WINDOW_PADDING_Y,
             entry -> {
                 if (entry == null || this.content.group().equals(entry.name())) return;
                 NetworkHandler.CHANNEL.sendToServer(new OpenGroupPacket(entry.name(), this.getClass() != QuestsScreen.class));
@@ -116,7 +127,7 @@ public class QuestsScreen extends AbstractQuestScreen<QuestsContent> {
         int textX = center - font.width(ConstantComponents.Groups.GROUPS) / 2;
         graphics.drawString(
             font,
-            ConstantComponents.Groups.GROUPS, textX, 3, QuestsScreenTheme.getHeaderGroupsTitle(),
+            ConstantComponents.Groups.GROUPS, textX + GuiConstants.WINDOW_PADDING_X, 3 + GuiConstants.WINDOW_PADDING_Y, QuestsScreenTheme.getHeaderGroupsTitle(),
             false
         );
     }

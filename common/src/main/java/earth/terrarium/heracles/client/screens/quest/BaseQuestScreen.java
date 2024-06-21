@@ -9,6 +9,7 @@ import earth.terrarium.heracles.client.widgets.SelectableTabButton;
 import earth.terrarium.heracles.client.widgets.base.TemporaryWidget;
 import earth.terrarium.heracles.client.widgets.buttons.ThemedButton;
 import earth.terrarium.heracles.common.constants.ConstantComponents;
+import earth.terrarium.heracles.common.constants.GuiConstants;
 import earth.terrarium.heracles.common.handlers.progress.QuestProgress;
 import earth.terrarium.heracles.common.menus.quest.QuestContent;
 import earth.terrarium.heracles.common.network.NetworkHandler;
@@ -25,6 +26,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import earth.terrarium.heracles.client.HeraclesClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,20 +80,20 @@ public abstract class BaseQuestScreen extends AbstractQuestScreen<QuestContent> 
             .orElse(false);
 
         if (showRewards || showTasks) {
-            this.overview = addRenderableWidget(new SelectableTabButton(5, 20, buttonWidth, 20, ConstantComponents.Quests.OVERVIEW, () -> {
+            this.overview = addRenderableWidget(new SelectableTabButton(5 + GuiConstants.WINDOW_PADDING_X, 20 + GuiConstants.WINDOW_PADDING_Y, buttonWidth, 20, ConstantComponents.Quests.OVERVIEW, () -> {
                 clearSelected();
                 if (this.overview != null) {
                     this.overview.setSelected(true);
                 }
             }));
             this.overview.setSelected(true);
-            this.progressWidget = addRenderableOnly(new QuestProgressWidget(5, this.height - (showRewards ? 60 : 35), buttonWidth));
+            this.progressWidget = addRenderableOnly(new QuestProgressWidget(5 + GuiConstants.WINDOW_PADDING_X, this.height - (showRewards ? 60 : 35) - GuiConstants.WINDOW_PADDING_Y, buttonWidth));
         }
 
-        int buttonY = 45;
+        int buttonY = 45 + GuiConstants.WINDOW_PADDING_Y;
 
         if (showTasks) {
-            this.tasks = addRenderableWidget(new SelectableTabButton(5, buttonY, buttonWidth, 20, ConstantComponents.Tasks.TITLE, () -> {
+            this.tasks = addRenderableWidget(new SelectableTabButton(5 + GuiConstants.WINDOW_PADDING_X, buttonY, buttonWidth, 20, ConstantComponents.Tasks.TITLE, () -> {
                 clearSelected();
                 if (this.tasks != null) {
                     this.tasks.setSelected(true);
@@ -101,7 +103,7 @@ public abstract class BaseQuestScreen extends AbstractQuestScreen<QuestContent> 
         }
 
         if (showRewards) {
-            this.rewards = addRenderableWidget(new SelectableTabButton(5, buttonY, buttonWidth, 20, ConstantComponents.Rewards.TITLE, () -> {
+            this.rewards = addRenderableWidget(new SelectableTabButton(5 + GuiConstants.WINDOW_PADDING_X, buttonY, buttonWidth, 20, ConstantComponents.Rewards.TITLE, () -> {
                 clearSelected();
                 if (this.rewards != null) {
                     this.rewards.setSelected(true);
@@ -113,12 +115,13 @@ public abstract class BaseQuestScreen extends AbstractQuestScreen<QuestContent> 
                 if (this.claimRewards != null) {
                     this.claimRewards.active = false;
                 }
-            }).bounds(5, this.height - 25, buttonWidth, 20).build());
+            }).bounds(5 + GuiConstants.WINDOW_PADDING_X, this.height - 25 - GuiConstants.WINDOW_PADDING_Y, buttonWidth, 20).build());
         }
     }
 
     @Override
     protected void goBack() {
+        HeraclesClient.lastOpenedQuestId = null;
         NetworkHandler.CHANNEL.sendToServer(new OpenGroupPacket(this.content.fromGroup(), this instanceof QuestEditScreen));
     }
 
@@ -148,10 +151,10 @@ public abstract class BaseQuestScreen extends AbstractQuestScreen<QuestContent> 
             renderable.render(graphics, mouseX, mouseY, partialTick);
         }
         if (getDescriptionError() != null && (this.overview == null || this.overview.isSelected())) {
-            int contentX = (int) (this.width * 0.31f) + 20;
-            int contentY = 30;
-            int contentWidth = (int) (this.width * 0.63f) - 40;
-            int contentHeight = this.height - 45;
+            int contentX = (int) (this.width * 0.31f) + 20 + GuiConstants.WINDOW_PADDING_X;
+            int contentY = 30 + GuiConstants.WINDOW_PADDING_Y;
+            int contentWidth = (int) (this.width * 0.63f) - 40 - 2 * GuiConstants.WINDOW_PADDING_X;
+            int contentHeight = this.height - 45 - 2 * GuiConstants.WINDOW_PADDING_Y;
             for (FormattedCharSequence sequence : Minecraft.getInstance().font.split(Component.literal(getDescriptionError()), contentWidth)) {
                 int textWidth = this.font.width(sequence);
                 graphics.drawString(

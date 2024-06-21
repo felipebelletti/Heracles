@@ -95,9 +95,7 @@ public class QuestWidget {
                 }
             }
 
-            if (status == ModUtils.QuestStatus.COMPLETED) {
-                lines.add(ConstantComponents.Quests.CLAIMABLE);
-            }
+            if (status == ModUtils.QuestStatus.COMPLETED) lines.add(ConstantComponents.Quests.CLAIMABLE);
 
             ScreenUtils.setTooltip(lines, false);
         }
