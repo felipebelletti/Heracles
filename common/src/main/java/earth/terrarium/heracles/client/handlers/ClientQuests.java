@@ -169,7 +169,7 @@ public class ClientQuests {
     }
 
     public static void syncGroup(QuestsContent content) {
-        STATUS.putAll(content.quests());
+        STATUS.putAll(content.questId_to_questStatus());
     }
 
     public record QuestEntry(String key, Quest value, List<QuestEntry> dependencies, List<QuestEntry> dependents) {

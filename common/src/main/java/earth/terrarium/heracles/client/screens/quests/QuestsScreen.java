@@ -64,7 +64,7 @@ public class QuestsScreen extends AbstractQuestScreen<QuestsContent> {
         }
 
         List<Pair<ClientQuests.QuestEntry, ModUtils.QuestStatus>> quests = new ArrayList<>();
-        content.quests().forEach((id, status) ->
+        content.questId_to_questStatus().forEach((id, status) ->
             ClientQuests.get(id)
                 .filter(quest -> quest.value().display().groups().containsKey(content.group()))
                 .ifPresent(quest -> quests.add(Pair.of(quest, status)))
@@ -146,7 +146,7 @@ public class QuestsScreen extends AbstractQuestScreen<QuestsContent> {
 
     public void updateProgress(Map<String, QuestProgress> quests) {
         List<Pair<ClientQuests.QuestEntry, ModUtils.QuestStatus>> statues = new ArrayList<>();
-        for (var entry : this.content.quests().entrySet()) {
+        for (var entry : this.content.questId_to_questStatus().entrySet()) {
             ClientQuests.QuestEntry quest = ClientQuests.get(entry.getKey())
                 .filter(q -> q.value().display().groups().containsKey(content.group()))
                 .orElse(null);

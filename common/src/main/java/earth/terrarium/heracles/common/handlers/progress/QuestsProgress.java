@@ -162,6 +162,11 @@ public record QuestsProgress(Map<String, QuestProgress> progress, CompletableQue
     public boolean isComplete(String id) {
         return Optionull.mapOrDefault(progress.get(id), QuestProgress::isComplete, false);
     }
+    
+    public Long tasksLeftCount(String questId) {
+    	QuestProgress questProgress = getProgress(questId);
+    	return questProgress.tasks().values().stream().filter(task -> !task.isComplete()).count();
+    }
 
     public boolean isClaimed(String id, Quest quest) {
         QuestProgress progress = this.progress.get(id);
