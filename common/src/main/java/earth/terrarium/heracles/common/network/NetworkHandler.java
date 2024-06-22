@@ -5,6 +5,7 @@ import earth.terrarium.heracles.Heracles;
 import earth.terrarium.heracles.common.network.packets.*;
 import earth.terrarium.heracles.common.network.packets.groups.CreateGroupPacket;
 import earth.terrarium.heracles.common.network.packets.groups.DeleteGroupPacket;
+import earth.terrarium.heracles.common.network.packets.groups.EditGroupPacket;
 import earth.terrarium.heracles.common.network.packets.groups.OpenGroupPacket;
 import earth.terrarium.heracles.common.network.packets.pinned.SetPinnedQuestPacket;
 import earth.terrarium.heracles.common.network.packets.pinned.SyncPinnedQuestsPacket;
@@ -16,6 +17,7 @@ import earth.terrarium.heracles.common.network.packets.screens.OpenQuestsScreenP
 import earth.terrarium.heracles.common.network.packets.tasks.CheckTaskPacket;
 import earth.terrarium.heracles.common.network.packets.tasks.ManualItemTaskPacket;
 import earth.terrarium.heracles.common.network.packets.tasks.ManualXpTaskPacket;
+import earth.terrarium.heracles.common.network.packets.groups.ClientboundUpdateGroupPacket;
 
 @SuppressWarnings("UnstableApiUsage")
 public class NetworkHandler {
@@ -34,9 +36,11 @@ public class NetworkHandler {
         CHANNEL.register(ClientboundAddQuestPacket.TYPE);
         CHANNEL.register(ClientboundRemoveQuestPacket.TYPE);
         CHANNEL.register(ClientboundUpdateQuestPacket.TYPE);
+        CHANNEL.register(ClientboundUpdateGroupPacket.TYPE);
         CHANNEL.register(QuestUnlockedPacket.TYPE);
         CHANNEL.register(ClientboundAdvancementDisplayPacket.TYPE);
         CHANNEL.register(ClientboundLootTablesDisplayPacket.TYPE);
+        CHANNEL.register(SyncGroupOrderPacket.TYPE);
 
         CHANNEL.register(OpenGroupPacket.TYPE);
         CHANNEL.register(OpenQuestPacket.TYPE);
@@ -51,5 +55,7 @@ public class NetworkHandler {
         CHANNEL.register(CheckTaskPacket.TYPE);
         CHANNEL.register(ManualItemTaskPacket.TYPE);
         CHANNEL.register(ManualXpTaskPacket.TYPE);
+        CHANNEL.register(EditGroupPacket.TYPE);
+        CHANNEL.register(ServerboundUpdateGroupOrderPacket.TYPE);
     }
 }
