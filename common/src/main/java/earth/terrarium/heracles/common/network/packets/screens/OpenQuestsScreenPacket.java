@@ -48,11 +48,13 @@ public record OpenQuestsScreenPacket(boolean editing, QuestsContent content) imp
         public Runnable handle(OpenQuestsScreenPacket message) {
             return () -> {
                 ClientQuests.syncGroup(message.content);
+
                 if (message.editing) {
                     ModScreens.openEditQuestsScreen(message.content);
-                } else {
-                    ModScreens.openQuestsScreen(message.content);
+                    return;
                 }
+                
+                ModScreens.openQuestsScreen(message.content);
             };
         }
     }
