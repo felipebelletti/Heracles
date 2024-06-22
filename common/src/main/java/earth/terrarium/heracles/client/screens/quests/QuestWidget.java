@@ -71,7 +71,7 @@ public class QuestWidget {
             
             lines.add(quest.display().title().copy().withStyle(ChatFormatting.BOLD));
             
-            if(this.tasksLeft > 0) {
+            if(this.tasksLeft != null && this.tasksLeft > 0) {
             	int totalTasks = quest.tasks().size();
             	lines.add(Component.literal(totalTasks - this.tasksLeft + "/" + totalTasks + " Tasks Complete"));            	
             }
