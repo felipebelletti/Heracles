@@ -272,8 +272,10 @@ public class QuestsWidget extends BaseWidget {
                 if (mouseMode.get().canSelect() && widget == this.selectHandler.selectedQuest()) {
                     TexturePlacements.Info info = widget.getTextureInfo();
                     graphics.renderOutline(
-                        x + offset.x() + widget.x() + info.xOffset() - 2, y + offset.y() + widget.y() + info.yOffset() - 2,
-                        info.width() + 4, info.height() + 4,
+                        x + offset.x() + widget.x() + info.xOffset() - 2,
+                        y + offset.y() + widget.y() + info.yOffset() - 2,
+                        info.width() + 4,
+                        info.height() + 4,
                         0xFFA8EFF0
                     );
                 }

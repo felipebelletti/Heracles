@@ -44,6 +44,7 @@ public class SelectQuestWidget extends BaseWidget {
 
     private final IntEditBox xBox;
     private final IntEditBox yBox;
+    private final IntEditBox scaleFactorBox;
     private final MultiLineEditBox subtitleBox;
 
     private final QuestsWidget widget;
@@ -74,6 +75,8 @@ public class SelectQuestWidget extends BaseWidget {
 
         this.xBox = this.addChild(new PositionBox(this.font, this.x + 16, this.y + 44, boxWidth - GuiConstants.WINDOW_PADDING_X, 10, ConstantComponents.X));
         this.yBox = this.addChild(new PositionBox(this.font, this.x + 33 + boxWidth, this.y + 44, boxWidth - GuiConstants.WINDOW_PADDING_X, 10, Component.literal("y")));
+        this.scaleFactorBox = this.addChild(new PositionBox(this.font, this.x + 10, this.y + 76, boxWidth - GuiConstants.WINDOW_PADDING_X, 10, Component.literal("")));
+        
         this.xBox.setNumberResponder(value -> ClientQuests.updateQuest(this.entry, quest -> NetworkQuestData.builder().group(quest, this.group, pos -> {
             pos.x = value;
             return pos;
@@ -82,8 +85,12 @@ public class SelectQuestWidget extends BaseWidget {
             pos.y = value;
             return pos;
         }), false));
+        this.scaleFactorBox.setNumberResponder(value -> ClientQuests.updateQuest(this.entry, quest -> {
+            quest.display().setScaleFactor(value);
+            return NetworkQuestData.builder().scaleFactor(quest.display().scaleFactor());
+        }, false));
 
-        this.subtitleBox = this.addChild(new MultiLineEditBox(this.font, this.x + 6, this.y + 76, this.width - 12 - GuiConstants.WINDOW_PADDING_X, 40, CommonComponents.EMPTY, CommonComponents.EMPTY));
+        this.subtitleBox = this.addChild(new MultiLineEditBox(this.font, this.x + 6, this.y + 106, this.width - 12 - GuiConstants.WINDOW_PADDING_X, 40, CommonComponents.EMPTY, CommonComponents.EMPTY));
         this.subtitleBox.setValueListener(s -> ClientQuests.updateQuest(
             this.entry,
             quest -> {
@@ -102,7 +109,7 @@ public class SelectQuestWidget extends BaseWidget {
                     });
                 }
                 loseFocusListener = b;
-            }).bounds(this.x + 6, this.y + 137, 16, 16)
+            }).bounds(this.x + 6, this.y + 167, 16, 16)
             .tooltip(Tooltip.create(Component.translatable("gui.heracles.quests.change_icon")))
             .build());
 
@@ -115,7 +122,7 @@ public class SelectQuestWidget extends BaseWidget {
                     });
                 }
                 loseFocusListener = b;
-            }).bounds(this.x + 24, this.y + 137, 16, 16)
+            }).bounds(this.x + 24, this.y + 167, 16, 16)
             .tooltip(Tooltip.create(Component.translatable("gui.heracles.quests.change_background")))
             .build());
 
@@ -125,7 +132,7 @@ public class SelectQuestWidget extends BaseWidget {
                     screen.dependencyModal().update(this.entry, () -> updateQuest(quest -> NetworkQuestData.builder().dependencies(quest.dependencies())));
                 }
                 loseFocusListener = b;
-            }).bounds(this.x + 42, this.y + 137, 16, 16)
+            }).bounds(this.x + 42, this.y + 167, 16, 16)
             .tooltip(Tooltip.create(Component.translatable("gui.heracles.quests.change_dependencies")))
             .build());
 
@@ -145,7 +152,7 @@ public class SelectQuestWidget extends BaseWidget {
                     });
                 }
                 loseFocusListener = b;
-            }).bounds(this.x + 60, this.y + 137, 16, 16)
+            }).bounds(this.x + 60, this.y + 167, 16, 16)
             .tooltip(Tooltip.create(ConstantComponents.DELETE))
             .build());
 
@@ -171,7 +178,7 @@ public class SelectQuestWidget extends BaseWidget {
                     edit.setTitle(Component.translatable("gui.heracles.quests.edit_quest_settings"));
                 }
                 loseFocusListener = b;
-            }).bounds(this.x + 78, this.y + 137, 16, 16)
+            }).bounds(this.x + 78, this.y + 167, 16, 16)
             .tooltip(Tooltip.create(Component.translatable("gui.heracles.quests.edit_quest_settings")))
             .build());
     }
@@ -202,19 +209,28 @@ public class SelectQuestWidget extends BaseWidget {
 
         graphics.fill(this.x + 4, this.y + 60, this.x + this.width - 4, this.y + 61, 0xff808080);
 
-        //Subtitle
+        // ScaleFactor
         graphics.drawString(
             font,
-            Component.translatable("gui.heracles.quests.subtitle"), this.x + 7, this.y + 65, 0x808080,
+            Component.literal("Scale Factor"), this.x + 7, this.y + 65, 0x808080,
             false
         );
 
-        graphics.fill(this.x + 4, this.y + 121, this.x + this.width - 4, this.y + 122, 0xff808080);
+        graphics.fill(this.x + 4, this.y + 91, this.x + this.width - 4, this.y + 92, 0xff808080);
+
+        //Subtitle
+        graphics.drawString(
+            font,
+            Component.translatable("gui.heracles.quests.subtitle"), this.x + 7, this.y + 95, 0x808080,
+            false
+        );
+
+        graphics.fill(this.x + 4, this.y + 151, this.x + this.width - 4, this.y + 152, 0xff808080);
 
         //Actions
         graphics.drawString(
             font,
-            Component.translatable("gui.heracles.quests.actions"), this.x + 7, this.y + 126, 0x808080,
+            Component.translatable("gui.heracles.quests.actions"), this.x + 7, this.y + 156, 0x808080,
             false
         );
 
@@ -226,6 +242,7 @@ public class SelectQuestWidget extends BaseWidget {
             loseFocusListener = null;
         }
     }
+
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
@@ -239,6 +256,7 @@ public class SelectQuestWidget extends BaseWidget {
         var position = this.entry.value().display().position(this.group);
         this.xBox.setIfNotFocused(position.x());
         this.yBox.setIfNotFocused(position.y());
+        this.scaleFactorBox.setIfNotFocused((int) this.entry.value().display().scaleFactor());
         String subtitle = getTranslationKey(this.entry.value().display().subtitle());
         if (!this.subtitleBox.getValue().equals(subtitle)) {
             this.subtitleBox.setValue(subtitle);

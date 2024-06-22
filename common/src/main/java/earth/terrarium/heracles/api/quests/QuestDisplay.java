@@ -30,7 +30,8 @@ public final class QuestDisplay {
         ExtraCodecs.COMPONENT.fieldOf("title").orElse(Component.literal("New Quest")).forGetter(QuestDisplay::title),
         ExtraCodecs.COMPONENT.fieldOf("subtitle").orElse(CommonComponents.EMPTY).forGetter(QuestDisplay::subtitle),
         DESCRIPTION_CODEC.fieldOf("description").orElse(List.of()).forGetter(QuestDisplay::description),
-        DispatchMapCodec.of(Codec.STRING, GroupDisplay::codec).fieldOf("groups").orElse(Map.of("Main", GroupDisplay.createDefault())).forGetter(QuestDisplay::groups)
+        DispatchMapCodec.of(Codec.STRING, GroupDisplay::codec).fieldOf("groups").orElse(Map.of("Main", GroupDisplay.createDefault())).forGetter(QuestDisplay::groups),
+        Codec.FLOAT.fieldOf("scale_factor").orElse(1.0f).forGetter(QuestDisplay::scaleFactor)
     ).apply(instance, QuestDisplay::new));
 
     private final Map<String, GroupDisplay> groups = new HashMap<>();
@@ -40,6 +41,7 @@ public final class QuestDisplay {
     private Component title;
     private Component subtitle;
     private List<String> description;
+    private float scaleFactor;
 
     public QuestDisplay(
         QuestIcon<?> icon,
@@ -47,7 +49,8 @@ public final class QuestDisplay {
         Component title,
         Component subtitle,
         List<String> description,
-        Map<String, GroupDisplay> groups
+        Map<String, GroupDisplay> groups,
+        float scaleFactor
     ) {
         this.icon = icon;
         this.iconBackground = iconBackground;
@@ -55,10 +58,19 @@ public final class QuestDisplay {
         this.subtitle = subtitle;
         this.description = description;
         this.groups.putAll(groups);
+        this.scaleFactor = scaleFactor;
     }
 
     public QuestIcon<?> icon() {
         return icon;
+    }
+    
+    public float scaleFactor() {
+        return scaleFactor;
+    }
+
+    public void setScaleFactor(float scaleFactor) {
+        this.scaleFactor = scaleFactor;
     }
 
     public void setIcon(QuestIcon<?> icon) {
@@ -125,7 +137,8 @@ public final class QuestDisplay {
             Component.literal("New Quest"),
             CommonComponents.EMPTY,
             List.of(),
-            Map.of(display.id(), display)
+            Map.of(display.id(), display),
+            1.0f
         );
     }
 }

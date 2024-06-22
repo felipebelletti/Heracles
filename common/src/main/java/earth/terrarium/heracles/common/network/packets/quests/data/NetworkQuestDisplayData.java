@@ -19,7 +19,8 @@ public record NetworkQuestDisplayData(
     Optional<Component> title,
     Optional<Component> subtitle,
     Optional<List<String>> description,
-    Optional<Map<String, GroupDisplay>> groups
+    Optional<Map<String, GroupDisplay>> groups,
+    Optional<Float> scaleFactor
 ) {
 
     private static final ByteCodec<Map<String, GroupDisplay>> GROUPS_CODEC = GroupDisplay.BYTE_CODEC.listOf()
@@ -35,6 +36,7 @@ public record NetworkQuestDisplayData(
         ExtraByteCodecs.COMPONENT.optionalFieldOf(NetworkQuestDisplayData::subtitle),
         ByteCodec.STRING.listOf().optionalFieldOf(NetworkQuestDisplayData::description),
         GROUPS_CODEC.optionalFieldOf(NetworkQuestDisplayData::groups),
+        ByteCodec.FLOAT.optionalFieldOf(NetworkQuestDisplayData::scaleFactor),
         NetworkQuestDisplayData::new
     );
 
@@ -48,5 +50,6 @@ public record NetworkQuestDisplayData(
             quest.display().groups().clear();
             quest.display().groups().putAll(groups);
         });
+        scaleFactor.ifPresent(quest.display()::setScaleFactor);
     }
 }

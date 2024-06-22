@@ -30,6 +30,8 @@ public class QuestWidget {
     private final Long tasksLeft;
 
     private TexturePlacements.Info info = TexturePlacements.NO_OFFSET_24X;
+    
+    private float scaleFactor;
 
     public QuestWidget(ClientQuests.QuestEntry entry, ModUtils.QuestStatus status, Long tasksLeft) {
         this.entry = entry;
@@ -37,32 +39,55 @@ public class QuestWidget {
         this.status = status;
         this.id = entry.key();
         this.tasksLeft = tasksLeft;
+        this.scaleFactor = quest.display().scaleFactor();
     }
 
     public void render(GuiGraphics graphics, ScissorBoxStack scissor, int x, int y, int mouseX, int mouseY, boolean hovered, float ignoredPartialTicks) {
+    	this.scaleFactor = quest.display().scaleFactor();
+    	
         hovered = hovered && isMouseOver(mouseX - x, mouseY - y);
-
         info = TexturePlacements.getOrDefault(quest.display().iconBackground(), TexturePlacements.NO_OFFSET_24X);
 
         RenderSystem.enableBlend();
         
-        graphics.blit(quest.display().iconBackground(),
-            x + x() + info.xOffset(), y + y() + info.yOffset(),
-            status.ordinal() * info.width(), 0,
-            info.width(), info.height(),
-            info.width() * 5, info.height()
+        int backgroundX = x + x() + info.xOffset();
+        int backgroundY = y + y() + info.yOffset();
+        int backgroundWidth = (int) (info.width() * scaleFactor);
+        int backgroundHeight = (int) (info.height() * scaleFactor);
+        graphics.blit(
+        	quest.display().iconBackground(),
+        	backgroundX,
+        	backgroundY,
+            (int) (status.ordinal() * info.width() * scaleFactor), // uOffset
+            0,                                                     // vOffset
+            backgroundWidth,                        // width
+            backgroundHeight,                       // height
+            (int) (info.width() * 5 * scaleFactor), // texture width
+            (int) (info.height() * scaleFactor)     // texture height
         );
 
         if (hovered) {
             graphics.blit(quest.display().iconBackground(),
-                x + x() + info.xOffset(), y + y() + info.yOffset(),
-                4 * info.width(), 0,
-                info.width(), info.height(),
-                info.width() * 5, info.height()
+            	backgroundX,
+            	backgroundY,
+                (int) (4 * info.width() * scaleFactor),
+                0,
+                backgroundWidth,
+                backgroundHeight,
+                (int) (info.width() * 5 * scaleFactor),
+                (int) (info.height() * scaleFactor)
             );
         }
         RenderSystem.disableBlend();
-        quest.display().icon().render(graphics, scissor, x + x() + 4, y + y() + 4, 24, 24);
+        
+        quest.display().icon().render(
+        		graphics,
+        		scissor,
+        		(int) (x + x() + (4 * scaleFactor)),
+        		(int) (y + y() + (4 * scaleFactor)),
+        		(int) (backgroundWidth * 0.88),
+        		(int) (backgroundHeight * 0.88)
+        );
         CursorUtils.setCursor(hovered, CursorScreen.Cursor.POINTER);
         
         if (hovered && (!(ClientUtils.screen() instanceof QuestsScreen screen) || !screen.isTemporaryWidgetVisible())) {
@@ -111,7 +136,13 @@ public class QuestWidget {
     }
 
     public boolean isMouseOver(double mouseX, double mouseY) {
-        return mouseX >= x() && mouseX <= x() + 24 && mouseY >= y() && mouseY <= y() + 24;
+        int backgroundWidth = (int) (info.width() * scaleFactor);
+        int backgroundHeight = (int) (info.height() * scaleFactor);
+    	
+        return mouseX >= x() &&
+        		mouseX <= x() + backgroundWidth &&
+        			mouseY >= y() &&
+        				mouseY <= y() + backgroundHeight;
     }
 
     public int x() {

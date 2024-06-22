@@ -64,6 +64,7 @@ public record NetworkQuestData(
         private Component subtitle;
         private List<String> description;
         private Map<String, GroupDisplay> groups;
+        private Float scaleFactor;
         private TriState individualProgress = TriState.UNDEFINED;
         private QuestDisplayStatus hiddenUntil = null;
         private TriState unlockNotification = TriState.UNDEFINED;
@@ -159,6 +160,11 @@ public record NetworkQuestData(
             this.rewards = new HashMap<>(rewards);
             return this;
         }
+        
+        public Builder scaleFactor(float scaleFactor) {
+            this.scaleFactor = scaleFactor;
+            return this;
+        }
 
         public NetworkQuestData build() {
             NetworkQuestDisplayData display = null;
@@ -169,7 +175,8 @@ public record NetworkQuestData(
                     Optional.ofNullable(title),
                     Optional.ofNullable(subtitle),
                     Optional.ofNullable(description),
-                    Optional.ofNullable(groups)
+                    Optional.ofNullable(groups),
+                    Optional.ofNullable(scaleFactor)
                 );
             }
             NetworkQuestSettingsData settings = null;

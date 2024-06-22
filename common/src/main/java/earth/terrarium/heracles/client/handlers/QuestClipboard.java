@@ -120,7 +120,8 @@ public class QuestClipboard {
                     quest.display().description(),
                     Util.make(quest.display().groups(), groups ->
                         groups.put(group, new GroupDisplay(group, new Vector2i((int) local.x() - 12, (int) local.y() - 12)))
-                    )
+                    ),
+                    quest.display().scaleFactor()
                 ),
                 quest.settings(),
                 Set.copyOf(quest.dependencies()),
