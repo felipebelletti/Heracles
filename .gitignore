@@ -117,3 +117,9 @@ run/
 common/bin/*
 fabric/bin/*
 forge/bin/*
+.vscode/launch.json
+common/.classpath
+common/.settings/org.eclipse.jdt.core.prefs
+common/.project
+fabric/.project
+forge/.project

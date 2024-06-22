@@ -15,6 +15,7 @@ import earth.terrarium.heracles.api.quests.Quest;
 import earth.terrarium.heracles.api.quests.QuestDisplayStatus;
 import earth.terrarium.heracles.client.HeraclesClient;
 import earth.terrarium.heracles.client.handlers.ClientQuests;
+import earth.terrarium.heracles.client.handlers.ClientQuests.QuestEntry;
 import earth.terrarium.heracles.client.screens.AbstractQuestScreen;
 import earth.terrarium.heracles.client.screens.mousemode.MouseMode;
 import earth.terrarium.heracles.client.utils.ClientUtils;
@@ -117,7 +118,10 @@ public class QuestsWidget extends BaseWidget {
         }
 
         for (Pair<ClientQuests.QuestEntry, ModUtils.QuestStatus> quest : visibleQuests) {
-            this.widgets.add(new QuestWidget(quest.getFirst(), quest.getSecond()));
+        	QuestEntry questEntry = quest.getFirst();
+        	ModUtils.QuestStatus questStatus = quest.getSecond();
+        	
+            this.widgets.add(new QuestWidget(questEntry, questStatus, this.content.questId_to_tasksLeft().get(questEntry.key())));
             this.entries.add(quest.getFirst());
             this.visibleQuests.add(quest.getFirst().key());
         }
@@ -189,10 +193,10 @@ public class QuestsWidget extends BaseWidget {
                 return;
             }
         }
-        this.widgets.add(new QuestWidget(quest, ModUtils.QuestStatus.IN_PROGRESS));
+        this.widgets.add(new QuestWidget(quest, ModUtils.QuestStatus.IN_PROGRESS, (long) quest.value().tasks().size()));
         this.entries.add(quest);
         if (this.content != null) {
-            this.content.quests().put(quest.key(), ModUtils.QuestStatus.IN_PROGRESS);
+            this.content.questId_to_questStatus().put(quest.key(), ModUtils.QuestStatus.IN_PROGRESS);
         }
     }
 
@@ -204,7 +208,7 @@ public class QuestsWidget extends BaseWidget {
             this.selectHandler.release();
         }
         if (this.content != null) {
-            this.content.quests().remove(quest.key());
+            this.content.questId_to_questStatus().remove(quest.key());
         }
     }
 

@@ -98,7 +98,7 @@ public class ModUtils {
         }
         NetworkHandler.CHANNEL.sendToPlayer(new OpenQuestsScreenPacket(
             false,
-            new QuestsContent(group, getQuests(player), player.hasPermissions(2))
+            new QuestsContent(group, getQuests(player), getQuestsToTasksLeft(player), player.hasPermissions(2))
         ), player);
     }
 
@@ -110,7 +110,7 @@ public class ModUtils {
         }
         NetworkHandler.CHANNEL.sendToPlayer(new OpenQuestsScreenPacket(
             true,
-            new QuestsContent(group, getQuests(player), player.hasPermissions(2))
+            new QuestsContent(group, getQuests(player), getQuestsToTasksLeft(player), player.hasPermissions(2))
         ), player);
     }
 
@@ -126,6 +126,15 @@ public class ModUtils {
             }
         });
         return quests;
+    }
+    
+    private static Map<String, Long> getQuestsToTasksLeft(ServerPlayer player) {
+        Map<String, Long> quests_to_tasks_left = new HashMap<>();
+        QuestsProgress progress = QuestProgressHandler.getProgress(player.server, player.getUUID());
+        QuestHandler.quests().forEach((questId, quest) -> {
+        	quests_to_tasks_left.put(questId, progress.tasksLeftCount(questId));
+        });
+        return quests_to_tasks_left;
     }
 
     public enum QuestStatus implements StringRepresentable {

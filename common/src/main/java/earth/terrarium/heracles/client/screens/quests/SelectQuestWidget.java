@@ -27,6 +27,7 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.resources.ResourceLocation;
+import earth.terrarium.heracles.common.constants.GuiConstants;
 
 import java.util.function.Function;
 
@@ -71,8 +72,8 @@ public class SelectQuestWidget extends BaseWidget {
 
         int boxWidth = (this.width - 40) / 2;
 
-        this.xBox = this.addChild(new PositionBox(this.font, this.x + 16, this.y + 44, boxWidth, 10, ConstantComponents.X));
-        this.yBox = this.addChild(new PositionBox(this.font, this.x + 33 + boxWidth, this.y + 44, boxWidth, 10, Component.literal("y")));
+        this.xBox = this.addChild(new PositionBox(this.font, this.x + 16, this.y + 44, boxWidth - GuiConstants.WINDOW_PADDING_X, 10, ConstantComponents.X));
+        this.yBox = this.addChild(new PositionBox(this.font, this.x + 33 + boxWidth, this.y + 44, boxWidth - GuiConstants.WINDOW_PADDING_X, 10, Component.literal("y")));
         this.xBox.setNumberResponder(value -> ClientQuests.updateQuest(this.entry, quest -> NetworkQuestData.builder().group(quest, this.group, pos -> {
             pos.x = value;
             return pos;
@@ -82,7 +83,7 @@ public class SelectQuestWidget extends BaseWidget {
             return pos;
         }), false));
 
-        this.subtitleBox = this.addChild(new MultiLineEditBox(this.font, this.x + 6, this.y + 76, this.width - 12, 40, CommonComponents.EMPTY, CommonComponents.EMPTY));
+        this.subtitleBox = this.addChild(new MultiLineEditBox(this.font, this.x + 6, this.y + 76, this.width - 12 - GuiConstants.WINDOW_PADDING_X, 40, CommonComponents.EMPTY, CommonComponents.EMPTY));
         this.subtitleBox.setValueListener(s -> ClientQuests.updateQuest(
             this.entry,
             quest -> {
