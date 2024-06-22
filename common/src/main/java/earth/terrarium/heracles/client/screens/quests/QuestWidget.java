@@ -64,8 +64,11 @@ public class QuestWidget {
         RenderSystem.disableBlend();
         quest.display().icon().render(graphics, scissor, x + x() + 4, y + y() + 4, 24, 24);
         CursorUtils.setCursor(hovered, CursorScreen.Cursor.POINTER);
+        
         if (hovered && (!(ClientUtils.screen() instanceof QuestsScreen screen) || !screen.isTemporaryWidgetVisible())) {
             List<Component> lines = new ArrayList<>();
+            String subtitleText = quest.display().subtitle().getString();
+            
             lines.add(quest.display().title().copy().withStyle(ChatFormatting.BOLD));
             
             if(this.tasksLeft > 0) {
@@ -83,11 +86,9 @@ public class QuestWidget {
                             Component.literal(String.format("- %s", dependencyName))
                                     .withStyle(ChatFormatting.RED)));
     
-            	
-            	lines.add(Component.literal(""));
+                if(!subtitleText.isBlank()) lines.add(Component.literal(""));
             }
 
-            String subtitleText = quest.display().subtitle().getString();
             if (!subtitleText.isBlank()) {
                 String[] subtitleLines = subtitleText.split("\n");
                 for (String line : subtitleLines) {
@@ -95,8 +96,16 @@ public class QuestWidget {
                 }
             }
 
-            if (status == ModUtils.QuestStatus.COMPLETED) lines.add(ConstantComponents.Quests.CLAIMABLE);
-
+            switch (status) {
+			case COMPLETED:
+				lines.add(ConstantComponents.Quests.CLAIMABLE);
+			case COMPLETED_CLAIMED:
+            	String completedUppercased = Component.translatable("quest.heracles.completed").getString().toUpperCase();
+            	lines.add(Component.literal(completedUppercased).withStyle(ChatFormatting.GREEN));
+			default:
+				break;
+            }
+            
             ScreenUtils.setTooltip(lines, false);
         }
     }
