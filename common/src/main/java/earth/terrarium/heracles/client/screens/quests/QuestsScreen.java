@@ -71,9 +71,9 @@ public class QuestsScreen extends AbstractQuestScreen<QuestsContent> {
         );
 
         questsWidget = addRenderableWidget(new QuestsWidget(
-            (int) (this.width * 0.25f) + GuiConstants.WINDOW_PADDING_X, // aka SIDE_BAR_PORTION
+            GuiConstants.WINDOW_PADDING_X + sideBarWidth,
             15 + GuiConstants.WINDOW_PADDING_Y,
-            (int) (this.width * 0.75f),
+            (int) (this.width - 0.17f - GuiConstants.WINDOW_PADDING_X),
             (int) (this.width * 0.50f),
             this.height - 15 - 2 * GuiConstants.WINDOW_PADDING_Y,
             () -> actualChildren().contains(selectQuestWidget),

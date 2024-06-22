@@ -126,22 +126,13 @@ public class QuestsWidget extends BaseWidget {
             this.visibleQuests.add(quest.getFirst().key());
         }
 
-        int[] xs = this.entries.stream()
-            .map(ClientQuests.QuestEntry::value)
-            .map(Quest::display)
-            .map(display -> display.groups().get(this.group))
-            .mapToInt(display -> display.position().x).toArray();
-        int[] ys = this.entries.stream()
-            .map(ClientQuests.QuestEntry::value)
-            .map(Quest::display)
-            .map(display -> display.groups().get(this.group))
-            .mapToInt(display -> display.position().y).toArray();
+        this.minX = MIN.x();
+        this.minY = MIN.y();
+        this.maxX = MAX.x();
+        this.maxY = MAX.y();
+        centreOffset.set(0, 0);
 
-        this.minX = Arrays.stream(xs).min().orElse(0) - 100;
-        this.minY = Arrays.stream(ys).min().orElse(0) - 100;
-        this.maxX = Arrays.stream(xs).max().orElse(0) + 100;
-        this.maxY = Arrays.stream(ys).max().orElse(0) + 100;
-        centreOffset.set(-((maxX + minX) / 2), -((maxY + minY) / 2));
+        Heracles.LOGGER.info("minX: " + this.minX + " minY: " + this.minY + " maxX: " + this.maxX + " maxY: " + this.maxY);
 
         if (!HeraclesClient.lastGroup.equalsIgnoreCase(content.group())) {
             offset.set(centreOffset);
@@ -289,23 +280,24 @@ public class QuestsWidget extends BaseWidget {
             }
         }
 
+        // scroll bar rendering
         try (var pose = new CloseablePoseStack(graphics)) {
-            pose.translate(0, 0, 300);
-            int xFromCentre = centreOffset.x - offset.x;
-            if (xFromCentre > this.width / 4 || xFromCentre < -this.width / 4) {
-                int canvasWidth = this.maxX - this.minX;
-                int width = (this.width - 10) * (this.width - 10) / (canvasWidth + this.width - 10);
-                int barX = this.x + 5 + (this.width - 10 - width) / 2 + (this.width - 10 - width) * xFromCentre / canvasWidth;
-                graphics.blitNineSliced(AbstractQuestScreen.HEADING, barX, this.y + this.height - 4, width, 2, 2, 32, 2, 224, 126);
-            }
+            // pose.translate(0, 0, 300);
+            // int xFromCentre = centreOffset.x - offset.x;
+            // if (xFromCentre > this.width / 4 || xFromCentre < -this.width / 4) {
+            //     int canvasWidth = this.maxX - this.minX;
+            //     int width = (this.width - 10) * (this.width - 10) / (canvasWidth + this.width - 10);
+            //     int barX = this.x + 5 + (this.width - 10 - width) / 2 + (this.width - 10 - width) * xFromCentre / canvasWidth;
+            //     graphics.blitNineSliced(AbstractQuestScreen.HEADING, barX, this.y + this.height - 4, width, 2, 2, 32, 2, 224, 126);
+            // }
 
-            int yFromCentre = centreOffset.y - offset.y;
-            if (yFromCentre > this.height / 4 || yFromCentre < -this.height / 4) {
-                int canvasHeight = this.maxY - this.minY;
-                int height = (this.height - 10) * (this.height - 10) / (canvasHeight + this.height - 10);
-                int barY = this.y + 5 + (this.height - 10 - height) / 2 + (this.height - 10 - height) * yFromCentre / canvasHeight;
-                graphics.blitNineSliced(AbstractQuestScreen.HEADING, this.x + this.width - 4, barY, 2, height, 2, 2, 32, 222, 96);
-            }
+            // int yFromCentre = centreOffset.y - offset.y;
+            // if (yFromCentre > this.height / 4 || yFromCentre < -this.height / 4) {
+            //     int canvasHeight = this.maxY - this.minY;
+            //     int height = (this.height - 10) * (this.height - 10) / (canvasHeight + this.height - 10);
+            //     int barY = this.y + 5 + (this.height - 10 - height) / 2 + (this.height - 10 - height) * yFromCentre / canvasHeight;
+            //     graphics.blitNineSliced(AbstractQuestScreen.HEADING, this.x + this.width - 4, barY, 2, height, 2, 2, 32, 222, 96);
+            // }
         }
     }
 
