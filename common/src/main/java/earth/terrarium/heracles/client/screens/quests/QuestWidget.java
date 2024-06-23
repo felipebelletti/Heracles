@@ -52,30 +52,30 @@ public class QuestWidget {
         
         int backgroundX = x + x() + info.xOffset();
         int backgroundY = y + y() + info.yOffset();
-        int backgroundWidth = (int) (info.width() * scaleFactor);
-        int backgroundHeight = (int) (info.height() * scaleFactor);
+        int backgroundWidth = Math.round(info.width() * scaleFactor);
+        int backgroundHeight = Math.round(info.height() * scaleFactor);
         graphics.blit(
         	quest.display().iconBackground(),
         	backgroundX,
         	backgroundY,
-            (int) (status.ordinal() * info.width() * scaleFactor), // uOffset
+        	Math.round(status.ordinal() * info.width() * scaleFactor), // uOffset
             0,                                                     // vOffset
             backgroundWidth,                        // width
             backgroundHeight,                       // height
-            (int) (info.width() * 5 * scaleFactor), // texture width
-            (int) (info.height() * scaleFactor)     // texture height
+            Math.round(info.width() * 5 * scaleFactor), // texture width
+            Math.round(info.height() * scaleFactor)     // texture height
         );
 
         if (hovered) {
             graphics.blit(quest.display().iconBackground(),
             	backgroundX,
             	backgroundY,
-                (int) (4 * info.width() * scaleFactor),
+            	Math.round(4 * info.width() * scaleFactor),
                 0,
                 backgroundWidth,
                 backgroundHeight,
-                (int) (info.width() * 5 * scaleFactor),
-                (int) (info.height() * scaleFactor)
+                Math.round(info.width() * 5 * scaleFactor),
+                Math.round(info.height() * scaleFactor)
             );
         }
         RenderSystem.disableBlend();
@@ -83,10 +83,10 @@ public class QuestWidget {
         quest.display().icon().render(
         		graphics,
         		scissor,
-        		(int) (x + x() + (4 * scaleFactor)),
-        		(int) (y + y() + (4 * scaleFactor)),
-        		(int) (backgroundWidth * 0.88),
-        		(int) (backgroundHeight * 0.88)
+        		Math.round(x + x() + (4 * scaleFactor)),
+        		Math.round(y + y() + (4 * scaleFactor)),
+        		(int) Math.round(backgroundWidth * 0.88),
+        		(int) Math.round(backgroundHeight * 0.88)
         );
         CursorUtils.setCursor(hovered, CursorScreen.Cursor.POINTER);
         
@@ -136,8 +136,8 @@ public class QuestWidget {
     }
 
     public boolean isMouseOver(double mouseX, double mouseY) {
-        int backgroundWidth = (int) (info.width() * scaleFactor);
-        int backgroundHeight = (int) (info.height() * scaleFactor);
+        int backgroundWidth = Math.round(info.width() * scaleFactor);
+        int backgroundHeight = Math.round(info.height() * scaleFactor);
     	
         return mouseX >= x() &&
         		mouseX <= x() + backgroundWidth &&
