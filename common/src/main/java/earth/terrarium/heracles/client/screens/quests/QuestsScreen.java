@@ -73,8 +73,8 @@ public class QuestsScreen extends AbstractQuestScreen<QuestsContent> {
         questsWidget = addRenderableWidget(new QuestsWidget(
             GuiConstants.WINDOW_PADDING_X + sideBarWidth,
             15 + GuiConstants.WINDOW_PADDING_Y,
-            Math.round(this.width - 0.17f - GuiConstants.WINDOW_PADDING_X),
-            Math.round(this.width * 0.50f),
+            Math.round(this.width - sideBarWidth - GuiConstants.WINDOW_PADDING_X * 2), // quest widgets screen width
+            Math.round(this.width * 0.50f),                                            // width for inspector mode
             this.height - 15 - 2 * GuiConstants.WINDOW_PADDING_Y,
             () -> actualChildren().contains(selectQuestWidget),
             this::getMouseMode,
