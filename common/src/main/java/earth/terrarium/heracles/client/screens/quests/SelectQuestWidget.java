@@ -44,7 +44,7 @@ public class SelectQuestWidget extends BaseWidget {
 
     private final IntEditBox xBox;
     private final IntEditBox yBox;
-    private final IntEditBox scaleFactorBox;
+    private final EditBox scaleFactorBox;
     private final MultiLineEditBox subtitleBox;
 
     private final QuestsWidget widget;
@@ -75,7 +75,7 @@ public class SelectQuestWidget extends BaseWidget {
 
         this.xBox = this.addChild(new PositionBox(this.font, this.x + 16, this.y + 44, boxWidth - GuiConstants.WINDOW_PADDING_X, 10, ConstantComponents.X));
         this.yBox = this.addChild(new PositionBox(this.font, this.x + 33 + boxWidth, this.y + 44, boxWidth - GuiConstants.WINDOW_PADDING_X, 10, Component.literal("y")));
-        this.scaleFactorBox = this.addChild(new PositionBox(this.font, this.x + 10, this.y + 76, boxWidth - GuiConstants.WINDOW_PADDING_X, 10, Component.literal("")));
+        this.scaleFactorBox = this.addChild(new EditBox(this.font, this.x + 10, this.y + 76, boxWidth - GuiConstants.WINDOW_PADDING_X, 10, CommonComponents.EMPTY));
         
         this.xBox.setNumberResponder(value -> ClientQuests.updateQuest(this.entry, quest -> NetworkQuestData.builder().group(quest, this.group, pos -> {
             pos.x = value;
@@ -85,11 +85,19 @@ public class SelectQuestWidget extends BaseWidget {
             pos.y = value;
             return pos;
         }), false));
-        this.scaleFactorBox.setNumberResponder(value -> ClientQuests.updateQuest(this.entry, quest -> {
-            quest.display().setScaleFactor(value);
-            return NetworkQuestData.builder().scaleFactor(quest.display().scaleFactor());
-        }, false));
-
+        this.scaleFactorBox.setResponder(value -> {
+            try {
+                float scaleFactor = Float.parseFloat(value);
+                ClientQuests.updateQuest(this.entry, quest -> {
+                    quest.display().setScaleFactor(scaleFactor);
+                    return NetworkQuestData.builder().scaleFactor(quest.display().scaleFactor());
+                }, false);
+            } catch (NumberFormatException e) {
+            	// @TODO: user-feedback
+                Heracles.LOGGER.error("Invalid scaleFactorBox float value: {}", value);
+            }
+        });
+        
         this.subtitleBox = this.addChild(new MultiLineEditBox(this.font, this.x + 6, this.y + 106, this.width - 12 - GuiConstants.WINDOW_PADDING_X, 40, CommonComponents.EMPTY, CommonComponents.EMPTY));
         this.subtitleBox.setValueListener(s -> ClientQuests.updateQuest(
             this.entry,
@@ -253,14 +261,26 @@ public class SelectQuestWidget extends BaseWidget {
 
     public void updateWidgets() {
         if (this.entry == null) return;
+        
         var position = this.entry.value().display().position(this.group);
         this.xBox.setIfNotFocused(position.x());
         this.yBox.setIfNotFocused(position.y());
-        this.scaleFactorBox.setIfNotFocused((int) this.entry.value().display().scaleFactor());
+        
+        /*
+         * @TODO: fix an issue where a number, let's say, 2 is
+         * being converted to 2.0, preventing the user from typing a decimal
+         * number unless they use shift to select it
+         */
+        String scale = Float.toString(this.entry.value().display().scaleFactor());
+        if (!this.scaleFactorBox.getValue().endsWith(".") && !this.scaleFactorBox.getValue().equals(scale)) {
+            this.scaleFactorBox.setValue(scale);
+        }        
+        
         String subtitle = getTranslationKey(this.entry.value().display().subtitle());
         if (!this.subtitleBox.getValue().equals(subtitle)) {
             this.subtitleBox.setValue(subtitle);
         }
+        
         String title = getTranslationKey(this.entry.value().display().title());
         if (!this.titleBox.getValue().equals(title)) {
             this.titleBox.setValue(title);
