@@ -57,37 +57,45 @@ public class QuestWidget {
         
         int backgroundX = x + x() + info.xOffset();
         int backgroundY = y + y() + info.yOffset();
-        int backgroundWidth = Math.round(info.width() * scaleFactor);
-        int backgroundHeight = Math.round(info.height() * scaleFactor);
-        graphics.blit(
-        	quest.display().iconBackground(),
-        	backgroundX,
-        	backgroundY,
-        	Math.round(status.ordinal() * info.width() * scaleFactor), // uOffset
-            0,                                                     // vOffset
-            backgroundWidth,                        // width
-            backgroundHeight,                       // height
-            Math.round(info.width() * 5 * scaleFactor), // texture width
-            Math.round(info.height() * scaleFactor)     // texture height
-        );
+        int backgroundWidth = info.width();
+        int backgroundHeight = info.height();
 
-        if (hovered) {
-            graphics.blit(quest.display().iconBackground(),
-            	backgroundX,
-            	backgroundY,
-            	Math.round(4 * info.width() * scaleFactor),
+        try (var pose = new CloseablePoseStack(graphics)) {
+            pose.translate(backgroundX, backgroundY, 0);
+            pose.scale(scaleFactor, scaleFactor, 1);
+
+            graphics.blit(
+                quest.display().iconBackground(),
                 0,
-                backgroundWidth,
-                backgroundHeight,
-                Math.round(info.width() * 5 * scaleFactor),
-                Math.round(info.height() * scaleFactor)
+                0,
+                status.ordinal() * info.width(), // uOffset
+                0, // vOffset
+                backgroundWidth, // width
+                backgroundHeight, // height
+                info.width() * 5, // texture width
+                info.height() // texture height
             );
+
+            if (hovered) {
+                graphics.blit(
+                    quest.display().iconBackground(),
+                    0,
+                    0,
+                    4 * info.width(), // uOffset
+                    0, // vOffset
+                    backgroundWidth, // width
+                    backgroundHeight, // height
+                    info.width() * 5, // texture width
+                    info.height() // texture height
+                );
+            }
         }
+
         RenderSystem.disableBlend();
-        
-        int iconX = backgroundX + (int) Math.round(0.1667 * backgroundWidth);
-        int iconY = backgroundY + (int) Math.round(0.1667 * backgroundHeight);
-        
+
+        float iconX = backgroundX + (0.1667f * backgroundWidth * scaleFactor);
+        float iconY = backgroundY + (0.1667f * backgroundHeight * scaleFactor);
+
         ItemStack itemIconStack = quest.display().icon().getItem().getDefaultInstance();
         if (itemIconStack != null && !itemIconStack.is(Items.AIR)) {
             try (var pose = new CloseablePoseStack(graphics)) {
