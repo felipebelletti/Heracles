@@ -168,7 +168,7 @@ public record NetworkQuestData(
 
         public NetworkQuestData build() {
             NetworkQuestDisplayData display = null;
-            if (icon != null || background != null || title != null || subtitle != null || description != null || groups != null) {
+            if (icon != null || background != null || title != null || subtitle != null || description != null || groups != null || scaleFactor != null) {
                 display = new NetworkQuestDisplayData(
                     Optional.ofNullable(icon),
                     Optional.ofNullable(background),
