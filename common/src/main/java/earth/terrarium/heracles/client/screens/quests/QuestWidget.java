@@ -1,6 +1,7 @@
 package earth.terrarium.heracles.client.screens.quests;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.teamresourceful.resourcefullib.client.CloseablePoseStack;
 import com.teamresourceful.resourcefullib.client.scissor.ScissorBoxStack;
 import com.teamresourceful.resourcefullib.client.screens.CursorScreen;
 import com.teamresourceful.resourcefullib.client.utils.CursorUtils;
@@ -12,10 +13,14 @@ import earth.terrarium.heracles.client.handlers.ClientQuests;
 import earth.terrarium.heracles.client.utils.ClientUtils;
 import earth.terrarium.heracles.common.constants.ConstantComponents;
 import earth.terrarium.heracles.client.utils.TexturePlacements;
+import earth.terrarium.heracles.common.utils.ItemValue;
 import earth.terrarium.heracles.common.utils.ModUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
@@ -80,14 +85,18 @@ public class QuestWidget {
         }
         RenderSystem.disableBlend();
         
-        quest.display().icon().render(
-        		graphics,
-        		scissor,
-        		Math.round(x + x() + (4 * scaleFactor)),
-        		Math.round(y + y() + (4 * scaleFactor)),
-        		(int) Math.round(backgroundWidth * 0.88),
-        		(int) Math.round(backgroundHeight * 0.88)
-        );
+        int iconX = backgroundX + (int) Math.round(0.1667 * backgroundWidth);
+        int iconY = backgroundY + (int) Math.round(0.1667 * backgroundHeight);
+        
+        ItemStack itemIconStack = quest.display().icon().getItem().getDefaultInstance();
+        if (itemIconStack != null && !itemIconStack.is(Items.AIR)) {
+            try (var pose = new CloseablePoseStack(graphics)) {
+                pose.translate(iconX, iconY, 0);
+                pose.scale(scaleFactor, scaleFactor, 1);
+                graphics.renderFakeItem(itemIconStack, 0, 0);
+            }
+        }
+        
         CursorUtils.setCursor(hovered, CursorScreen.Cursor.POINTER);
         
         if (hovered && (!(ClientUtils.screen() instanceof QuestsScreen screen) || !screen.isTemporaryWidgetVisible())) {

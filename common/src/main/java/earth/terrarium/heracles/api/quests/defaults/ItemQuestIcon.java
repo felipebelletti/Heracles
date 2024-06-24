@@ -30,6 +30,10 @@ public record ItemQuestIcon(ItemValue item) implements QuestIcon<ItemQuestIcon> 
     public QuestIconType<ItemQuestIcon> type() {
         return TYPE;
     }
+    
+    public ItemValue getItem() {
+    	return item;
+    }
 
     private static class Type implements QuestIconType<ItemQuestIcon> {
 

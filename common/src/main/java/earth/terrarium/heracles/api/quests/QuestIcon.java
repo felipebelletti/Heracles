@@ -3,11 +3,14 @@ package earth.terrarium.heracles.api.quests;
 import com.teamresourceful.resourcefullib.client.scissor.ScissorBoxStack;
 import earth.terrarium.heracles.api.client.WidgetUtils;
 import earth.terrarium.heracles.client.compat.RecipeViewerHelper;
+import earth.terrarium.heracles.common.utils.ItemValue;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.world.item.ItemStack;
 
 public interface QuestIcon<T extends QuestIcon<T>> {
 
+	public ItemValue getItem();
+	
     boolean render(GuiGraphics graphics, ScissorBoxStack scissor, int x, int y, int width, int height);
 
     QuestIconType<T> type();
