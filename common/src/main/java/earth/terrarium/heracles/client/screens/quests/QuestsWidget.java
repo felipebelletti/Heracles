@@ -136,8 +136,6 @@ public class QuestsWidget extends BaseWidget {
         this.maxX = MAX.x();
         this.maxY = MAX.y();
         centreOffset.set(0, 0);
-
-        Heracles.LOGGER.info("minX: " + this.minX + " minY: " + this.minY + " maxX: " + this.maxX + " maxY: " + this.maxY);
         
         if(HeraclesClient.lastGroup.equalsIgnoreCase(content.group())) {
         	if(HeraclesClient.lastQuestScreenOffset != null)
