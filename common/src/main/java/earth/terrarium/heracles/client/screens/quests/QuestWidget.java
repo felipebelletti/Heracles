@@ -9,6 +9,7 @@ import com.teamresourceful.resourcefullib.client.utils.ScreenUtils;
 
 import earth.terrarium.heracles.Heracles;
 import earth.terrarium.heracles.api.quests.Quest;
+import earth.terrarium.heracles.client.HeraclesClient;
 import earth.terrarium.heracles.client.handlers.ClientQuests;
 import earth.terrarium.heracles.client.utils.ClientUtils;
 import earth.terrarium.heracles.common.constants.ConstantComponents;
@@ -25,6 +26,7 @@ import org.joml.Vector2i;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class QuestWidget {
 
@@ -37,6 +39,7 @@ public class QuestWidget {
     private TexturePlacements.Info info = TexturePlacements.NO_OFFSET_24X;
     
     private float scaleFactor;
+    private float zoomFactor = 1;
 
     public QuestWidget(ClientQuests.QuestEntry entry, ModUtils.QuestStatus status, Long tasksLeft) {
         this.entry = entry;
@@ -46,9 +49,14 @@ public class QuestWidget {
         this.tasksLeft = tasksLeft;
         this.scaleFactor = quest.display().scaleFactor();
     }
+    
+    public void setZoomFactor(float zoomFactor) {
+    	HeraclesClient.lastZoomScale = Optional.of(zoomFactor);
+    	this.zoomFactor = zoomFactor;
+    }
 
     public void render(GuiGraphics graphics, ScissorBoxStack scissor, int x, int y, int mouseX, int mouseY, boolean hovered, float ignoredPartialTicks) {
-    	this.scaleFactor = quest.display().scaleFactor();
+    	this.scaleFactor = quest.display().scaleFactor() * this.zoomFactor;
     	
         hovered = hovered && isMouseOver(mouseX - x, mouseY - y);
         info = TexturePlacements.getOrDefault(quest.display().iconBackground(), TexturePlacements.NO_OFFSET_24X);
@@ -163,11 +171,11 @@ public class QuestWidget {
     }
 
     public int x() {
-        return position().x();
+        return Math.round(position().x() * this.zoomFactor);
     }
 
     public int y() {
-        return position().y();
+        return Math.round(position().y() * this.zoomFactor);
     }
 
     public Vector2i position() {

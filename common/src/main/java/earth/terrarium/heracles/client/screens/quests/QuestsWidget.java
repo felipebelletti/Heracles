@@ -83,6 +83,11 @@ public class QuestsWidget extends BaseWidget {
     private int maxY = 0;
     private int minX = 0;
     private int minY = 0;
+    
+    private float zoomSpeed = 0.07f;
+    private float minZoomFactor = 0.1f;
+    private float maxZoomFactor = 20f;
+    private float zoomFactor = 1.0f;
 
     public QuestsWidget(int x, int y, int width, int selectedWidth, int height, BooleanSupplier inspectorOpened, Supplier<MouseMode> mouseMode, Consumer<ClientQuests.QuestEntry> onSelection) {
         this.x = x;
@@ -94,7 +99,7 @@ public class QuestsWidget extends BaseWidget {
         this.inspectorOpened = inspectorOpened;
         this.mouseMode = mouseMode;
         this.group = ClientUtils.screen() instanceof QuestsScreen screen ? screen.getGroup() : "";
-        this.selectHandler = new SelectQuestHandler(this.group, onSelection);
+        this.selectHandler = new SelectQuestHandler(this.group, onSelection); 
     }
 
     public void update(QuestsContent content, List<Pair<ClientQuests.QuestEntry, ModUtils.QuestStatus>> quests) {
@@ -133,18 +138,19 @@ public class QuestsWidget extends BaseWidget {
         centreOffset.set(0, 0);
 
         Heracles.LOGGER.info("minX: " + this.minX + " minY: " + this.minY + " maxX: " + this.maxX + " maxY: " + this.maxY);
-
-        if (!HeraclesClient.lastGroup.equalsIgnoreCase(content.group())) {
-            offset.set(centreOffset);
+        
+        if(HeraclesClient.lastGroup.equalsIgnoreCase(content.group())) {
+        	if(HeraclesClient.lastQuestScreenOffset != null)
+        		offset.set(HeraclesClient.lastQuestScreenOffset);
+        	
+        	HeraclesClient.lastZoomScale.ifPresent(zoom -> {
+            	zoomFactor = zoom;
+            	applyZoom(zoom);
+            });
+        	return;
         }
 
-        if (isEditing) {
-            this.minX = MIN.x();
-            this.minY = MIN.y();
-            this.maxX = MAX.x();
-            this.maxY = MAX.y();
-            centreOffset.set(0, 0);
-        }
+        offset.set(centreOffset);
     }
 
     private static boolean shouldHide(String group, Object2BooleanMap<String> statuses, ClientQuests.QuestEntry quest) {
@@ -305,13 +311,16 @@ public class QuestsWidget extends BaseWidget {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollAmount) {
-        if (Screen.hasShiftDown()) {
-            offset.add((int) scrollAmount * 10, 0);
-        } else {
-            offset.add(0, (int) scrollAmount * 10);
-        }
-        offset.set(-Mth.clamp(-offset.x(), minX, maxX), -Mth.clamp(-offset.y(), minY, maxY)); // Flip offset to use bounds properly (fix offset itself eventually)
+        zoomFactor = Mth.clamp(zoomFactor + (float) scrollAmount * zoomSpeed, minZoomFactor, maxZoomFactor);
+        applyZoom(zoomFactor);
+
         return true;
+    }
+    
+    private void applyZoom(float zoomFactor) {
+    	for(QuestWidget widget : this.widgets) {
+        	widget.setZoomFactor(zoomFactor);;
+        }
     }
 
     @Override
@@ -353,6 +362,7 @@ public class QuestsWidget extends BaseWidget {
             int newX = (int) (mouseX - start.x() + startOffset.x());
             int newY = (int) (mouseY - start.y() + startOffset.y());
             offset.set(-Mth.clamp(-newX, minX, maxX), -Mth.clamp(-newY, minY, maxY)); // Flip offset to use bounds properly (fix offset itself eventually)
+            HeraclesClient.lastQuestScreenOffset = offset;
         } else if (mode.canDragSelection()) {
             this.selectHandler.onDrag((int) mouseX, (int) mouseY);
         }

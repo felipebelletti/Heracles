@@ -20,7 +20,10 @@ import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.world.item.Item;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
+
+import org.joml.Vector2i;
 
 public class HeraclesClient {
 
@@ -32,6 +35,8 @@ public class HeraclesClient {
 
     public static String lastGroup = "";
     public static String lastOpenedQuestId = null;
+    public static Vector2i lastQuestScreenOffset = null;
+    public static Optional<Float> lastZoomScale = Optional.empty();
 
     public static void init() {
         Heracles.setRegistryAccess(() -> {
