@@ -132,9 +132,13 @@ public class QuestWidget {
             			.withStyle(ChatFormatting.UNDERLINE));
             	
                 quest.dependencies().forEach(
-                    dependencyName -> lines.add(
-                            Component.literal(String.format("- %s", dependencyName))
-                                    .withStyle(ChatFormatting.RED)));
+                    dependencyQuestId -> {
+                    	String dependencyQuestName = ClientQuests.get(dependencyQuestId).get().value().display().title().getString();
+                    	lines.add(
+                    			Component.literal(dependencyQuestName)
+                    			.withStyle(ChatFormatting.RED));                    	
+                    }
+               );
     
                 if(!subtitleText.isBlank()) lines.add(Component.literal(""));
             }
