@@ -255,10 +255,10 @@ public class QuestsWidget extends BaseWidget {
                     Info childInfo = TexturePlacements.getOrDefault(parentEntry.value().display().iconBackground(), TexturePlacements.NO_OFFSET_24X);
                     float childScaleFactor = child.value().display().scaleFactor() * zoomFactor;
 
-                    float px = (parentPosition.x() + (parentInfo.width() / 2)) * parentScaleFactor;
-                    float py = (parentPosition.y() + (parentInfo.height() / 2)) * parentScaleFactor;
-                    float cx = (childPosition.x() + (childInfo.width() / 2)) * childScaleFactor;
-                    float cy = (childPosition.y() + (childInfo.height() / 2)) * childScaleFactor;
+                    float px = (parentPosition.x() + ((parentInfo.width() * parentScaleFactor) / 2));
+                    float py = (parentPosition.y() + ((parentInfo.height() * parentScaleFactor) / 2));
+                    float cx = (childPosition.x()  +  ((childInfo.width() * childScaleFactor) / 2));
+                    float cy = (childPosition.y()  +  ((childInfo.height() * childScaleFactor) / 2));
 
                     float length = Mth.sqrt(Mth.square(cx - px) + Mth.square(cy - py));
 
