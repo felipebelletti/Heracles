@@ -232,13 +232,14 @@ public class QuestsWidget extends BaseWidget {
                 var parentPosition = parentEntry.value().display().position(this.group);
                 
                 Info parentInfo = TexturePlacements.getOrDefault(parentEntry.value().display().iconBackground(), TexturePlacements.NO_OFFSET_24X);
-                float parentScaleFactor = parentEntry.value().display().scaleFactor() * zoomFactor;
+                float parentScaleFactor = parentEntry.value().display().scaleFactor();
+                float parentScaleFactorZooming = parentScaleFactor * zoomFactor;
 
                 boolean isHovered = isMouseOver(mouseX, mouseY) &&
-                                    mouseX >= x + offset.x() + (parentPosition.x() * parentScaleFactor) &&
-                                    mouseX <= x + offset.x() + (parentPosition.x() * parentScaleFactor) + (parentInfo.width() * parentScaleFactor) &&
-                                    mouseY >= y + offset.y() + (parentPosition.y() * parentScaleFactor) &&
-                                    mouseY <= y + offset.y() + (parentPosition.y() * parentScaleFactor) + (parentInfo.height() * parentScaleFactor);
+                                    mouseX >= x + offset.x() + (parentPosition.x() * parentScaleFactorZooming) &&
+                                    mouseX <= x + offset.x() + (parentPosition.x() * parentScaleFactorZooming) + (parentInfo.width() * parentScaleFactorZooming) &&
+                                    mouseY >= y + offset.y() + (parentPosition.y() * parentScaleFactorZooming) &&
+                                    mouseY <= y + offset.y() + (parentPosition.y() * parentScaleFactorZooming) + (parentInfo.height() * parentScaleFactorZooming);
 
                 RenderSystem.setShaderColor(0.9F, 0.9F, 0.9F, isHovered ? 0.8f : 0.4F);
 
@@ -253,12 +254,12 @@ public class QuestsWidget extends BaseWidget {
                     lines.add(new Pair<>(parentPosition, childPosition));
                     
                     Info childInfo = TexturePlacements.getOrDefault(parentEntry.value().display().iconBackground(), TexturePlacements.NO_OFFSET_24X);
-                    float childScaleFactor = child.value().display().scaleFactor() * zoomFactor;
+                    float childScaleFactor = child.value().display().scaleFactor(); 
 
-                    float px = (parentPosition.x() + ((parentInfo.width() * parentScaleFactor) / 2));
-                    float py = (parentPosition.y() + ((parentInfo.height() * parentScaleFactor) / 2));
-                    float cx = (childPosition.x()  +  ((childInfo.width() * childScaleFactor) / 2));
-                    float cy = (childPosition.y()  +  ((childInfo.height() * childScaleFactor) / 2));
+                    float px = (parentPosition.x() * zoomFactor) + ( ((parentInfo.width() * parentScaleFactor) / 2) * zoomFactor);
+                    float py = (parentPosition.y() * zoomFactor) + ( ((parentInfo.height() * parentScaleFactor) / 2) * zoomFactor);
+                    float cx = (childPosition.x() * zoomFactor) +  ( ((childInfo.width() * childScaleFactor) / 2) * zoomFactor);
+                    float cy = (childPosition.y() * zoomFactor) +  ( ((childInfo.height() * childScaleFactor) / 2) * zoomFactor);
 
                     float length = Mth.sqrt(Mth.square(cx - px) + Mth.square(cy - py));
 
