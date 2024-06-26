@@ -21,6 +21,7 @@ import earth.terrarium.heracles.client.screens.mousemode.MouseMode;
 import earth.terrarium.heracles.client.utils.ClientUtils;
 import earth.terrarium.heracles.client.utils.MouseClick;
 import earth.terrarium.heracles.client.utils.TexturePlacements;
+import earth.terrarium.heracles.client.utils.TexturePlacements.Info;
 import earth.terrarium.heracles.client.widgets.base.BaseWidget;
 import earth.terrarium.heracles.common.menus.quests.QuestsContent;
 import earth.terrarium.heracles.common.network.NetworkHandler;
@@ -33,6 +34,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
@@ -226,35 +228,42 @@ public class QuestsWidget extends BaseWidget {
 
             final Set<Pair<Vector2i, Vector2i>> lines = new HashSet<>();
 
-            for (ClientQuests.QuestEntry entry : this.entries) {
-                var position = entry.value().display().position(this.group);
+            for (ClientQuests.QuestEntry parentEntry : this.entries) {
+                var parentPosition = parentEntry.value().display().position(this.group);
+                
+                Info parentInfo = TexturePlacements.getOrDefault(parentEntry.value().display().iconBackground(), TexturePlacements.NO_OFFSET_24X);
+                float parentScaleFactor = parentEntry.value().display().scaleFactor() * zoomFactor;
 
                 boolean isHovered = isMouseOver(mouseX, mouseY) &&
-                                    mouseX >= x + offset.x() + position.x() &&
-                                    mouseX <= x + offset.x() + position.x() + 32 &&
-                                    mouseY >= y + offset.y() + position.y() &&
-                                    mouseY <= y + offset.y() + position.y() + 32;
+                                    mouseX >= x + offset.x() + (parentPosition.x() * parentScaleFactor) &&
+                                    mouseX <= x + offset.x() + (parentPosition.x() * parentScaleFactor) + (parentInfo.width() * parentScaleFactor) &&
+                                    mouseY >= y + offset.y() + (parentPosition.y() * parentScaleFactor) &&
+                                    mouseY <= y + offset.y() + (parentPosition.y() * parentScaleFactor) + (parentInfo.height() * parentScaleFactor);
 
                 RenderSystem.setShaderColor(0.9F, 0.9F, 0.9F, isHovered ? 0.8f : 0.4F);
 
-                for (ClientQuests.QuestEntry child : entry.dependents()) {
+                // draw quest dependency lines
+                for (ClientQuests.QuestEntry child : parentEntry.dependents()) {
                     if (!child.value().display().groups().containsKey(this.group)) continue;
                     if (!this.visibleQuests.contains(child.key())) continue;
                     if (!child.value().settings().showDependencyArrow()) continue;
                     var childPosition = child.value().display().position(this.group);
+                    
+                    if (lines.contains(new Pair<>(parentPosition, childPosition))) continue;
+                    lines.add(new Pair<>(parentPosition, childPosition));
+                    
+                    Info childInfo = TexturePlacements.getOrDefault(parentEntry.value().display().iconBackground(), TexturePlacements.NO_OFFSET_24X);
+                    float childScaleFactor = child.value().display().scaleFactor() * zoomFactor;
 
-                    if (lines.contains(new Pair<>(position, childPosition))) continue;
-                    lines.add(new Pair<>(position, childPosition));
-
-                    float px = position.x() + 10f;
-                    float py = position.y() + 10f;
-                    float cx = childPosition.x() + 10f;
-                    float cy = childPosition.y() + 10f;
+                    float px = (parentPosition.x() + (parentInfo.width() / 2)) * parentScaleFactor;
+                    float py = (parentPosition.y() + (parentInfo.height() / 2)) * parentScaleFactor;
+                    float cx = (childPosition.x() + (childInfo.width() / 2)) * childScaleFactor;
+                    float cy = (childPosition.y() + (childInfo.height() / 2)) * childScaleFactor;
 
                     float length = Mth.sqrt(Mth.square(cx - px) + Mth.square(cy - py));
 
                     try (var pose = new CloseablePoseStack(graphics)) {
-                        pose.translate(px + 2, py + 2, 0);
+                        pose.translate(px, py, 0);
                         pose.translate(x + offset.x(), y + offset.y(), 0);
                         pose.mulPose(Axis.ZP.rotation((float) Mth.atan2(cy - py, cx - px)));
 
@@ -378,7 +387,10 @@ public class QuestsWidget extends BaseWidget {
 
     @Override
     public boolean isMouseOver(double mouseX, double mouseY) {
-        return mouseX >= this.x && mouseX <= this.x + this.width && mouseY >= this.y && mouseY <= this.y + this.height;
+        return mouseX >= this.x &&
+        		mouseX <= this.x + this.width &&
+        		mouseY >= this.y &&
+        		mouseY <= this.y + this.height;
     }
 
     public SelectQuestHandler selectHandler() {
