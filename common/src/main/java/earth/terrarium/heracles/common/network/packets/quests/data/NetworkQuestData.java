@@ -65,6 +65,7 @@ public record NetworkQuestData(
         private List<String> description;
         private Map<String, GroupDisplay> groups;
         private Float scaleFactor;
+        private TriState showDependencyLineOnlyOnHover = TriState.UNDEFINED;
         private TriState individualProgress = TriState.UNDEFINED;
         private QuestDisplayStatus hiddenUntil = null;
         private TriState unlockNotification = TriState.UNDEFINED;
@@ -165,6 +166,11 @@ public record NetworkQuestData(
             this.scaleFactor = scaleFactor;
             return this;
         }
+        
+        public Builder showDependencyLineOnlyOnHover(boolean value) {
+        	this.showDependencyLineOnlyOnHover = TriState.of(value);
+        	return this;
+        }
 
         public NetworkQuestData build() {
             NetworkQuestDisplayData display = null;
@@ -180,14 +186,15 @@ public record NetworkQuestData(
                 );
             }
             NetworkQuestSettingsData settings = null;
-            if (individualProgress != TriState.UNDEFINED || hiddenUntil != null || unlockNotification != TriState.UNDEFINED) {
+            if (individualProgress != TriState.UNDEFINED || hiddenUntil != null || unlockNotification != TriState.UNDEFINED || showDependencyLineOnlyOnHover != TriState.UNDEFINED) {
                 settings = new NetworkQuestSettingsData(
                     Optional.ofNullable(individualProgress.isUndefined() ? null : individualProgress.isTrue()),
                     Optional.ofNullable(hiddenUntil),
                     Optional.ofNullable(unlockNotification.isUndefined() ? null : unlockNotification.isTrue()),
                     Optional.ofNullable(showDependencyArrow.isUndefined() ? null : showDependencyArrow.isTrue()),
                     Optional.ofNullable(repeatable.isUndefined() ? null : repeatable.isTrue()),
-                    Optional.ofNullable(autoClaimRewards.isUndefined() ? null : autoClaimRewards.isTrue())
+                    Optional.ofNullable(autoClaimRewards.isUndefined() ? null : autoClaimRewards.isTrue()),
+                    Optional.ofNullable(showDependencyLineOnlyOnHover.isUndefined() ? null : showDependencyLineOnlyOnHover.isTrue())
                 );
             }
 

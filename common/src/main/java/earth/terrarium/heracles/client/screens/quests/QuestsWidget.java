@@ -235,19 +235,20 @@ public class QuestsWidget extends BaseWidget {
                 float parentScaleFactor = parentEntry.value().display().scaleFactor();
                 float parentScaleFactorZooming = parentScaleFactor * zoomFactor;
 
-                boolean isHovered = isMouseOver(mouseX, mouseY) &&
+                boolean isParentHovered = isMouseOver(mouseX, mouseY) &&
                                     mouseX >= x + offset.x() + (parentPosition.x() * parentScaleFactorZooming) &&
                                     mouseX <= x + offset.x() + (parentPosition.x() * parentScaleFactorZooming) + (parentInfo.width() * parentScaleFactorZooming) &&
                                     mouseY >= y + offset.y() + (parentPosition.y() * parentScaleFactorZooming) &&
                                     mouseY <= y + offset.y() + (parentPosition.y() * parentScaleFactorZooming) + (parentInfo.height() * parentScaleFactorZooming);
 
-                RenderSystem.setShaderColor(0.9F, 0.9F, 0.9F, isHovered ? 0.8f : 0.4F);
+                RenderSystem.setShaderColor(0.9F, 0.9F, 0.9F, isParentHovered ? 0.8f : 0.4F);
 
                 // draw quest dependency lines
                 for (ClientQuests.QuestEntry child : parentEntry.dependents()) {
                     if (!child.value().display().groups().containsKey(this.group)) continue;
                     if (!this.visibleQuests.contains(child.key())) continue;
                     if (!child.value().settings().showDependencyArrow()) continue;
+                    
                     var childPosition = child.value().display().position(this.group);
                     
                     if (lines.contains(new Pair<>(parentPosition, childPosition))) continue;
@@ -255,11 +256,20 @@ public class QuestsWidget extends BaseWidget {
                     
                     Info childInfo = TexturePlacements.getOrDefault(parentEntry.value().display().iconBackground(), TexturePlacements.NO_OFFSET_24X);
                     float childScaleFactor = child.value().display().scaleFactor(); 
-
                     float px = (parentPosition.x() * zoomFactor) + ( ((parentInfo.width() * parentScaleFactor) / 2) * zoomFactor);
                     float py = (parentPosition.y() * zoomFactor) + ( ((parentInfo.height() * parentScaleFactor) / 2) * zoomFactor);
                     float cx = (childPosition.x() * zoomFactor) +  ( ((childInfo.width() * childScaleFactor) / 2) * zoomFactor);
                     float cy = (childPosition.y() * zoomFactor) +  ( ((childInfo.height() * childScaleFactor) / 2) * zoomFactor);
+                    float childScaleFactorZooming = childScaleFactor * zoomFactor;
+                    
+                    boolean ischildHovered = isMouseOver(mouseX, mouseY) &&
+                            mouseX >= x + offset.x() + (childPosition.x() * childScaleFactorZooming) &&
+                            mouseX <= x + offset.x() + (childPosition.x() * childScaleFactorZooming) + (childInfo.width() * childScaleFactorZooming) &&
+                            mouseY >= y + offset.y() + (childPosition.y() * childScaleFactorZooming) &&
+                            mouseY <= y + offset.y() + (childPosition.y() * childScaleFactorZooming) + (childInfo.height() * childScaleFactorZooming);
+
+                    // @TODO: add support for toggling showDependencyLineOnlyOnHover within quests config tab
+                    if(child.value().settings().showDependencyLineOnlyOnHover() && !ischildHovered) continue;
 
                     float length = Mth.sqrt(Mth.square(cx - px) + Mth.square(cy - py));
 

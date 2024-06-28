@@ -14,7 +14,8 @@ public record NetworkQuestSettingsData(
     Optional<Boolean> unlockNotification,
     Optional<Boolean> showDependencyArrow,
     Optional<Boolean> repeatable,
-    Optional<Boolean> autoClaimRewards
+    Optional<Boolean> autoClaimRewards,
+    Optional<Boolean> showDependencyLineOnlyOnHover
 ) {
 
     public static final ByteCodec<NetworkQuestSettingsData> CODEC = ObjectByteCodec.create(
@@ -24,6 +25,7 @@ public record NetworkQuestSettingsData(
         ByteCodec.BOOLEAN.optionalFieldOf(NetworkQuestSettingsData::showDependencyArrow),
         ByteCodec.BOOLEAN.optionalFieldOf(NetworkQuestSettingsData::repeatable),
         ByteCodec.BOOLEAN.optionalFieldOf(NetworkQuestSettingsData::autoClaimRewards),
+        ByteCodec.BOOLEAN.optionalFieldOf(NetworkQuestSettingsData::showDependencyLineOnlyOnHover),
         NetworkQuestSettingsData::new
     );
 
@@ -35,5 +37,6 @@ public record NetworkQuestSettingsData(
         showDependencyArrow.ifPresent(settings::setShowDependencyArrow);
         repeatable.ifPresent(settings::setRepeatable);
         autoClaimRewards.ifPresent(settings::setAutoClaimRewards);
+        showDependencyLineOnlyOnHover.ifPresent(settings::setAutoClaimRewards);
     }
 }

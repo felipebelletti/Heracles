@@ -13,7 +13,8 @@ public final class QuestSettings {
         Codec.BOOL.fieldOf("unlockNotification").orElse(false).forGetter(QuestSettings::unlockNotification),
         Codec.BOOL.fieldOf("showDependencyArrow").orElse(true).forGetter(QuestSettings::showDependencyArrow),
         Codec.BOOL.fieldOf("repeatable").orElse(false).forGetter(QuestSettings::repeatable),
-        Codec.BOOL.fieldOf("autoClaimRewards").orElse(false).forGetter(QuestSettings::autoClaimRewards)
+        Codec.BOOL.fieldOf("autoClaimRewards").orElse(false).forGetter(QuestSettings::autoClaimRewards),
+        Codec.BOOL.fieldOf("show_dependency_line_only_on_hover").orElse(false).forGetter(QuestSettings::showDependencyLineOnlyOnHover)
     ).apply(instance, QuestSettings::new));
 
     private boolean individualProgress;
@@ -22,18 +23,20 @@ public final class QuestSettings {
     private boolean showDependencyArrow;
     private boolean repeatable;
     private boolean autoClaimRewards;
+    private boolean showDependencyLineOnlyOnHover;
 
-    public QuestSettings(boolean individualProgress, QuestDisplayStatus hiddenUntil, boolean unlockNotification, boolean showDependencyArrow, boolean repeatable, boolean autoClaimRewards) {
+    public QuestSettings(boolean individualProgress, QuestDisplayStatus hiddenUntil, boolean unlockNotification, boolean showDependencyArrow, boolean repeatable, boolean autoClaimRewards, boolean showDependencyLineOnlyOnHover) {
         this.individualProgress = individualProgress;
         this.hiddenUntil = hiddenUntil;
         this.unlockNotification = unlockNotification;
         this.showDependencyArrow = showDependencyArrow;
         this.repeatable = repeatable;
         this.autoClaimRewards = autoClaimRewards;
+        this.showDependencyLineOnlyOnHover = showDependencyLineOnlyOnHover;
     }
 
     public static QuestSettings createDefault() {
-        return new QuestSettings(false, QuestDisplayStatus.LOCKED, false, true, false, false);
+        return new QuestSettings(false, QuestDisplayStatus.LOCKED, false, true, false, false, false);
     }
 
     public boolean individualProgress() {
@@ -58,6 +61,14 @@ public final class QuestSettings {
 
     public boolean autoClaimRewards() {
         return autoClaimRewards;
+    }
+    
+    public boolean showDependencyLineOnlyOnHover() {
+    	return showDependencyLineOnlyOnHover;
+    }
+    
+    public void setShowDependencyLineOnlyOnHover(boolean value) {
+    	this.showDependencyLineOnlyOnHover = value;
     }
 
     @Override

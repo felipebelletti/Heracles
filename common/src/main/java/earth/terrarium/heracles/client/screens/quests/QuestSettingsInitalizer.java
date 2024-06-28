@@ -31,7 +31,8 @@ public class QuestSettingsInitalizer implements SettingInitializer<QuestSettings
             data.get("unlock_notification", BooleanSetting.FALSE).orElse(object != null && object.unlockNotification()),
             data.get("show_dependency_arrow", BooleanSetting.TRUE).orElse(object != null && object.showDependencyArrow()),
             data.get("repeatable", BooleanSetting.FALSE).orElse(object != null && object.repeatable()),
-            data.get("auto_claim_rewards", BooleanSetting.FALSE).orElse(object != null && object.autoClaimRewards())
+            data.get("auto_claim_rewards", BooleanSetting.FALSE).orElse(object != null && object.autoClaimRewards()),
+            data.get("show_dependency_line_only_on_hover", BooleanSetting.FALSE).orElse(object != null && object.showDependencyLineOnlyOnHover())
         );
     }
 }
