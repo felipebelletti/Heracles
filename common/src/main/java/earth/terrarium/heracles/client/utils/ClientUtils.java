@@ -82,4 +82,24 @@ public class ClientUtils {
             BufferUploader.drawWithShader(bufferBuilder.end());
         }
     }
+
+    public static void drawLine(GuiGraphics graphics, int startX, int startY, int endX, int endY, float red, float green, float blue, float alpha) {
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShaderColor(red, green, blue, alpha);
+
+        Matrix4f matrix = graphics.pose().last().pose();
+        Tesselator tesselator = Tesselator.getInstance();
+        BufferBuilder buffer = tesselator.getBuilder();
+        buffer.begin(VertexFormat.Mode.DEBUG_LINES, DefaultVertexFormat.POSITION_COLOR);
+
+        buffer.vertex(matrix, startX, startY, 0).color(red, green, blue, alpha).endVertex();
+        buffer.vertex(matrix, endX, endY, 0).color(red, green, blue, alpha).endVertex();
+
+        BufferUploader.drawWithShader(buffer.end());
+
+        RenderSystem.disableBlend();
+        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f); 
+    }
 }
