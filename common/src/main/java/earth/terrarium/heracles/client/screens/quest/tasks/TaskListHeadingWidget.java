@@ -5,6 +5,7 @@ import earth.terrarium.heracles.api.client.DisplayWidget;
 import earth.terrarium.heracles.api.client.WidgetUtils;
 import earth.terrarium.heracles.api.client.theme.QuestScreenTheme;
 import earth.terrarium.heracles.common.constants.ConstantComponents;
+import earth.terrarium.heracles.common.utils.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -18,6 +19,7 @@ public record TaskListHeadingWidget(int tasks, int completed) implements Display
     @Override
     public void render(GuiGraphics graphics, ScissorBoxStack scissor, int x, int y, int width, int mouseX, int mouseY, boolean hovered, float partialTicks) {
         WidgetUtils.drawSummaryBackground(graphics, x, y, width, 30);
+        WidgetUtils.drawStatusSummaryBackground(graphics, x, y, width, 30, tasks == completed ? ModUtils.QuestStatus.COMPLETED_CLAIMED : ModUtils.QuestStatus.IN_PROGRESS);
 
         String desc = tasks == completed ? DESC_COMPLETE : (tasks - completed > 1 ? DESC_PLURAL : DESC_SINGULAR);
         String completion = String.format("%.0f%%", this.completed * 100 / (double) tasks);

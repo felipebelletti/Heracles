@@ -36,7 +36,7 @@ public abstract class AbstractQuestScreen<T> extends PriorityScreen {
     protected static final float SIDE_BAR_PORTION = 0.17f;
     protected static int sideBarWidth;
 
-    protected static final float QUEST_CONTENT_PORTION = 0.66f;
+	protected static final float QUEST_CONTENT_PORTION = 0.48f;
     protected static int questContentWidth;
 
     public AbstractQuestScreen(T content, Component component) {

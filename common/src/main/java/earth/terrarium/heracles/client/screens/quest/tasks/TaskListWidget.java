@@ -88,7 +88,9 @@ public class TaskListWidget extends AbstractContainerEventHandler implements Ren
     }
 
     public void update(Collection<QuestTask<?, ?, ?>> tasks) {
-        List<MutablePair<QuestTask<?, ?, ?>, DisplayWidget>> dependencies = new ArrayList<>();
+    	if(tasks.size() == 0) return;
+    		
+    	List<MutablePair<QuestTask<?, ?, ?>, DisplayWidget>> dependencies = new ArrayList<>();
         List<MutablePair<QuestTask<?, ?, ?>, DisplayWidget>> inProgress = new ArrayList<>();
         List<MutablePair<QuestTask<?, ?, ?>, DisplayWidget>> completed = new ArrayList<>();
         for (var task : tasks) {
