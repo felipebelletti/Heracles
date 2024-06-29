@@ -67,6 +67,7 @@
     "gui.heracles.quests.add_dependency": "添加依赖",
     "gui.heracles.quests.choose_background": "选择背景",
     "gui.heracles.group.groups": "组",
+    "gui.heracles.group.chapters": "章节",
     "gui.heracles.group.create": "创建组",
     "gui.heracles.group.delete": "包含任务时无法删除它",
     "gui.heracles.tools.move": "移动/选择[V]",

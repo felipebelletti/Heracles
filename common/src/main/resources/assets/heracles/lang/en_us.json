@@ -69,6 +69,7 @@
     "gui.heracles.quests.add_dependency": "Add Dependency",
     "gui.heracles.quests.choose_background": "Choose Background",
     "gui.heracles.group.groups": "Groups",
+    "gui.heracles.group.chapters": "Chapters",
     "gui.heracles.group.create": "Create Group",
     "gui.heracles.group.delete": "You can't delete this while it has quests.",
     "gui.heracles.tools.move": "Move/Select [V]",
