@@ -76,6 +76,9 @@ public final class ConstantComponents {
         @Translate("Groups")
         public static final Component GROUPS = Component.translatable("gui.heracles.group.groups");
 
+        @Translate("Groups")
+        public static final Component CHAPTERS = Component.translatable("gui.heracles.group.chapters");
+
         @Translate("Create Group")
         public static final Component CREATE = Component.translatable("gui.heracles.group.create");
 
