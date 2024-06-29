@@ -18,6 +18,7 @@ import earth.terrarium.heracles.client.widgets.modals.CreateObjectModal;
 import earth.terrarium.heracles.client.widgets.modals.EditObjectModal;
 import earth.terrarium.heracles.client.widgets.modals.ItemModal;
 import earth.terrarium.heracles.common.constants.ConstantComponents;
+import earth.terrarium.heracles.common.constants.GuiConstants;
 import earth.terrarium.heracles.common.handlers.progress.QuestProgress;
 import earth.terrarium.heracles.common.handlers.quests.QuestHandler;
 import earth.terrarium.heracles.common.menus.quest.QuestContent;
@@ -75,12 +76,18 @@ public class QuestEditScreen extends BaseQuestScreen {
 
         this.createModal = addTemporary(new CreateObjectModal(this.width, this.height));
 
-        int contentWidth = (int) (this.width * 0.63f);
-        int contentHeight = this.height - 15;
-        int contentX = (int) (this.width * 0.31f);
-        int contentY = 15;
+        int contentX = GuiConstants.WINDOW_PADDING_X + 4;
+        int contentY = 18;
+        
+        boolean hasRewardsEntries = !this.entry().value().rewards().isEmpty();
+        boolean hasTasklistEntries = !this.entry().value().tasks().isEmpty();
+        int contentWidth = questContentWidth;
+        int contentHeight = this.height - 15 - 2 * GuiConstants.WINDOW_PADDING_Y;
+        int taskListHeight = hasRewardsEntries ? contentHeight / 2 : contentHeight;
+        int rewardsListHeight = hasTasklistEntries ? contentHeight / 2 : contentHeight;
+        int rewardListY = hasTasklistEntries ? (height / 2) : contentY;
 
-        this.taskList = new TaskListWidget(contentX, contentY, contentWidth, contentHeight, 5.0D, 5.0D,
+        this.taskList = new TaskListWidget(width / 2, contentY + GuiConstants.WINDOW_PADDING_Y, contentWidth, taskListHeight, 5.0D, 5.0D,
             this.content.id(), this.entry(), this.content.progress(), this.content.quests(), (task, isRemoving) -> {
             if (isRemoving) {
                 ClientQuests.updateQuest(this.entry(), quest -> {
@@ -116,7 +123,7 @@ public class QuestEditScreen extends BaseQuestScreen {
         });
 
         this.rewardList = new RewardListWidget(
-            contentX, contentY, contentWidth, contentHeight, 5.0D, 5.0D, this.entry(),
+        		width / 2, rewardListY + GuiConstants.WINDOW_PADDING_Y, contentWidth, rewardsListHeight - GuiConstants.WINDOW_PADDING_Y, 5.0D, 5.0D, this.entry(),
             this.content.progress(), (reward, isRemoving) -> {
                 if (isRemoving) {
                     ClientQuests.updateQuest(this.entry(), quest -> {
@@ -158,7 +165,7 @@ public class QuestEditScreen extends BaseQuestScreen {
             )).setTooltip(Tooltip.create(ConstantComponents.TOGGLE_EDIT));
         }
 
-        this.descriptionBox = new QuestMultiLineEditBox(contentX, contentY, contentWidth, contentHeight);
+        this.descriptionBox = new QuestMultiLineEditBox(contentX, contentY + 14, contentWidth - 8, contentHeight - claimRewardsButtonHeight - 4);
         this.descriptionBox.setValue(String.join("\n", this.quest().display().description()).replace("§", "&&"));
 
         if (Minecraft.getInstance().isLocalServer()) {

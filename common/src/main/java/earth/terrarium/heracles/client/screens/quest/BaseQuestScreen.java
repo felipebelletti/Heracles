@@ -82,7 +82,7 @@ public abstract class BaseQuestScreen extends AbstractQuestScreen<QuestContent> 
         super.init();
         int claimRewardsButtonWidth = sideBarWidth - 10;
         int goBackButtonWidth = sideBarWidth - 40;
-        separatorLineX = (this.width / 2) - 8;
+        separatorLineX = (this.width / 2) - 6;
 
         boolean showRewards = isEditing() || ClientQuests.get(this.content.id())
                 .map(ClientQuests.QuestEntry::value)
@@ -155,7 +155,7 @@ public abstract class BaseQuestScreen extends AbstractQuestScreen<QuestContent> 
 
         // Render Description Error if exists
         if (getDescriptionError() != null) {
-            int contentX = (int) (this.width * 0.31f) + 20 + GuiConstants.WINDOW_PADDING_X;
+            int contentX = GuiConstants.WINDOW_PADDING_X + 4;
             int contentY = 30 + GuiConstants.WINDOW_PADDING_Y;
             int contentWidth = (int) (this.width * 0.63f) - 40 - 2 * GuiConstants.WINDOW_PADDING_X;
             int contentHeight = this.height - 45 - 2 * GuiConstants.WINDOW_PADDING_Y;
