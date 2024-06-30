@@ -83,9 +83,9 @@ public class QuestEditScreen extends BaseQuestScreen {
         boolean hasTasklistEntries = !this.entry().value().tasks().isEmpty();
         int contentWidth = questContentWidth;
         int contentHeight = this.height - 15 - 2 * GuiConstants.WINDOW_PADDING_Y;
-        int taskListHeight = hasRewardsEntries ? contentHeight / 2 : contentHeight;
-        int rewardsListHeight = hasTasklistEntries ? contentHeight / 2 : contentHeight;
-        int rewardListY = hasTasklistEntries ? (height / 2) : contentY;
+        int taskListHeight = contentHeight / 2;
+        int rewardsListHeight = contentHeight / 2;
+        int rewardListY = height / 2;
 
         this.taskList = new TaskListWidget(width / 2, contentY + GuiConstants.WINDOW_PADDING_Y, contentWidth, taskListHeight, 5.0D, 5.0D,
             this.content.id(), this.entry(), this.content.progress(), this.content.quests(), (task, isRemoving) -> {
@@ -97,7 +97,7 @@ public class QuestEditScreen extends BaseQuestScreen {
                 this.taskList.update(this.quest().tasks().values());
                 return;
             }
-            taskPopup(ModUtils.cast(task.type()), task.id(), ModUtils.cast(task), this.taskList::updateTask);
+           taskPopup(ModUtils.cast(task.type()), task.id(), ModUtils.cast(task), this.taskList::updateTask);
         }, () -> {
             BiConsumer<String, QuestTaskType<?>> creator = (id, type) ->
                 taskPopup(ModUtils.cast(type), id, null, newTask -> {
@@ -120,7 +120,7 @@ public class QuestEditScreen extends BaseQuestScreen {
                     .map(QuestTaskType::id)
                     .toList()
             );
-        });
+        }, true);
 
         this.rewardList = new RewardListWidget(
         		width / 2, rewardListY + GuiConstants.WINDOW_PADDING_Y, contentWidth, rewardsListHeight - GuiConstants.WINDOW_PADDING_Y, 5.0D, 5.0D, this.entry(),
@@ -165,7 +165,7 @@ public class QuestEditScreen extends BaseQuestScreen {
             )).setTooltip(Tooltip.create(ConstantComponents.TOGGLE_EDIT));
         }
 
-        this.descriptionBox = new QuestMultiLineEditBox(contentX, contentY + 14, contentWidth - 8, contentHeight - claimRewardsButtonHeight - 4);
+        this.descriptionBox = new QuestMultiLineEditBox(contentX, contentY + 14, contentWidth - 8, contentHeight - claimRewardsButtonHeight - 6);
         this.descriptionBox.setValue(String.join("\n", this.quest().display().description()).replace("§", "&&"));
 
         if (Minecraft.getInstance().isLocalServer()) {
@@ -198,6 +198,7 @@ public class QuestEditScreen extends BaseQuestScreen {
                 consumer.accept(ModUtils.cast(newTask));
             });
             widget.setTitle(ConstantComponents.Tasks.EDIT);
+            widget.setFocused(true);
         }
     }
 
@@ -274,4 +275,16 @@ public class QuestEditScreen extends BaseQuestScreen {
     public ItemModal itemModal() {
         return this.itemModal;
     }
+    
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    	if (this.itemModal.isVisible()) {
+            return this.itemModal.mouseClicked(mouseX, mouseY, button);
+        }
+        if (this.createModal.isVisible()) {
+            return this.createModal.mouseClicked(mouseX, mouseY, button);
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+    
 }

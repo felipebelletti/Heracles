@@ -57,11 +57,13 @@ public class TaskListWidget extends AbstractContainerEventHandler implements Ren
 
     private final BiConsumer<QuestTask<?, ?, ?>, Boolean> onClick;
     private final Runnable onCreate;
+    
+    private boolean isEditorMode;
 
     public TaskListWidget(
         int x, int y, int width, int height, double overscrollTop, double overscrollBottom,
         String questId, ClientQuests.QuestEntry entry, QuestProgress progress,
-        Map<String, ModUtils.QuestStatus> quests, BiConsumer<QuestTask<?, ?, ?>, Boolean> onClick, Runnable onCreate
+        Map<String, ModUtils.QuestStatus> quests, BiConsumer<QuestTask<?, ?, ?>, Boolean> onClick, Runnable onCreate, boolean isEditorMode
     ) {
         this.x = x;
         this.y = y;
@@ -77,18 +79,19 @@ public class TaskListWidget extends AbstractContainerEventHandler implements Ren
         this.onClick = onClick;
         this.onCreate = onCreate;
         this.scrollAmount = -overscrollTop;
+        this.isEditorMode = isEditorMode;
     }
 
     public TaskListWidget(
         int x, int y, int width, int height,
         String questId, ClientQuests.QuestEntry entry, QuestProgress progress,
-        Map<String, ModUtils.QuestStatus> quests, BiConsumer<QuestTask<?, ?, ?>, Boolean> onClick, Runnable onCreate
+        Map<String, ModUtils.QuestStatus> quests, BiConsumer<QuestTask<?, ?, ?>, Boolean> onClick, Runnable onCreate, boolean isEditorMode
     ) {
-        this(x, y, width, height, 0.0D, 0.0D, questId, entry, progress, quests, onClick, onCreate);
+        this(x, y, width, height, 0.0D, 0.0D, questId, entry, progress, quests, onClick, onCreate, isEditorMode);
     }
 
     public void update(Collection<QuestTask<?, ?, ?>> tasks) {
-    	if(tasks.size() == 0) return;
+    	if(tasks.size() == 0 && !isEditorMode) return;
     		
     	List<MutablePair<QuestTask<?, ?, ?>, DisplayWidget>> dependencies = new ArrayList<>();
         List<MutablePair<QuestTask<?, ?, ?>, DisplayWidget>> inProgress = new ArrayList<>();

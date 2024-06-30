@@ -63,8 +63,8 @@ public class QuestScreen extends BaseQuestScreen {
         int rewardListY = hasTasklistEntries ? (height / 2) : CONTENT_Y;
 
         this.taskList = new TaskListWidget(width / 2, CONTENT_Y + GuiConstants.WINDOW_PADDING_Y, questContentWidth,
-        		taskListHeight, 5.0D, 5.0D, this.content.id(), this.entry(), this.content.progress(),
-                this.content.quests(), null, null);
+        	taskListHeight, 5.0D, 5.0D, this.content.id(), this.entry(), this.content.progress(),
+        	this.content.quests(), null, null, false);
         this.rewardList = new RewardListWidget(width / 2, rewardListY + GuiConstants.WINDOW_PADDING_Y, questContentWidth,
         		rewardsListHeight - claimRewardsButtonHeight - GuiConstants.WINDOW_PADDING_Y, 5.0D, 5.0D, this.entry(), this.content.progress(), null, null);
         
