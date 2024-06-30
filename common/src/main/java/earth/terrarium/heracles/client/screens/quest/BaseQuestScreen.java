@@ -139,7 +139,7 @@ public abstract class BaseQuestScreen extends AbstractQuestScreen<QuestContent> 
         }
 
         // Render Task List
-        if (getTaskList() instanceof Renderable renderableTaskList) {
+        if (getTaskList() != null && getTaskList() instanceof Renderable renderableTaskList) {
             renderableTaskList.render(graphics, mouseX, mouseY, partialTick);
         }
 
@@ -149,7 +149,7 @@ public abstract class BaseQuestScreen extends AbstractQuestScreen<QuestContent> 
         }
 
         // Render Description Widget
-        if (getDescriptionWidget() instanceof Renderable renderableDescription) {
+        if (getDescriptionWidget() != null && getDescriptionWidget() instanceof Renderable renderableDescription) {
             renderableDescription.render(graphics, mouseX, mouseY, partialTick);
         }
 
