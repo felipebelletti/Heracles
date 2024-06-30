@@ -49,6 +49,11 @@ public abstract class AbstractQuestScreen<T> extends PriorityScreen {
         super.init();
         sideBarWidth = (int) (width * SIDE_BAR_PORTION) - 2;
         questContentWidth = (int) (width * QUEST_CONTENT_PORTION);
+        
+        // hacky fix for supporting higher gui scales
+        int scale = Minecraft.getInstance().options.guiScale().get();
+        if(scale == 3) questContentWidth = (int) (questContentWidth * 0.97);
+        if(scale == 4) questContentWidth = (int) (questContentWidth * 0.98);
 
         if (hasBackButton) {
             addRenderableWidget(new ImageButton(GuiConstants.WINDOW_PADDING_X + 1, GuiConstants.WINDOW_PADDING_Y + 1, 11, 11, 0, 15, 11, HEADING, 256, 256, (button) ->
