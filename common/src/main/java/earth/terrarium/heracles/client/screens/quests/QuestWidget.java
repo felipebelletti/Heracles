@@ -211,4 +211,8 @@ public class QuestWidget {
     public TexturePlacements.Info getTextureInfo() {
         return this.info;
     }
+    
+    public float getScaleFactor() {
+    	return scaleFactor;
+    }
 }

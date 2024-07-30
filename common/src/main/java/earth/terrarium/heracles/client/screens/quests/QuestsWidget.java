@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.Tesselator;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.datafixers.util.Pair;
@@ -295,13 +296,21 @@ public class QuestsWidget extends BaseWidget {
                 widget.render(graphics, scissor.stack(), x + offset.x(), y + offset.y(), mouseX, mouseY, isMouseOver(mouseX, mouseY), partialTick);
                 if (mouseMode.get().canSelect() && widget == this.selectHandler.selectedQuest()) {
                     TexturePlacements.Info info = widget.getTextureInfo();
+                    float widgetScaleFactor = widget.getScaleFactor();
+                    
+                    PoseStack poseStack = graphics.pose();
+                    poseStack.pushPose();
+					poseStack.translate(x + widget.x(), y + widget.y(), 0);
+                    poseStack.scale(widgetScaleFactor, widgetScaleFactor, 1.0F);
+                    
                     graphics.renderOutline(
-                        x + offset.x() + widget.x() + info.xOffset() - 2,
-                        y + offset.y() + widget.y() + info.yOffset() - 2,
-                        info.width() + 4,
-                        info.height() + 4,
+                    	0,
+                    	0,
+                        info.width(),
+                        info.height(),
                         0xFFA8EFF0
                     );
+                    poseStack.popPose();
                 }
             }
         }
